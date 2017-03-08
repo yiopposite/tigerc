@@ -1,5 +1,6 @@
-#undef __STDC__
+/*#undef __STDC__*/
 #include <stdio.h>
+#include <stdlib.h>
 
 
 int *initArray(int size, int init)
@@ -41,12 +42,14 @@ struct string consts[256];
 struct string empty={0,""};
 
 int main()
-{int i;
- for(i=0;i<256;i++)
+{
+  extern int _Tiger_main(int);
+  int i;
+  for(i=0;i<256;i++)
    {consts[i].length=1;
     consts[i].chars[0]=i;
    }
- return tigermain(0 /* static link!? */);
+ return _Tiger_main(0 /* static link!? */);
 }
 
 int ord(struct string *s)
@@ -100,9 +103,9 @@ int not(int i)
 { return !i;
 }
 
-#undef getchar
+/*#undef getchar*/
 
-struct string *getchar()
+struct string *_Tiger_getchar()
 {int i=getc(stdin);
  if (i==EOF) return &empty;
  else return consts+i;

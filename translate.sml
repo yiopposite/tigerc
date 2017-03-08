@@ -2,6 +2,7 @@ signature TRANSLATE =
 sig
     type level
     type access
+    type exp
 
     val outermost:  level
     val newLevel:   level * Temp.label * bool list * string option -> level
@@ -9,8 +10,6 @@ sig
     val allocLocal: level -> bool -> access
 
     exception BREAK
-
-    type exp
 
     val mkNil: unit -> exp
     val mkInt: int -> exp
@@ -64,12 +63,13 @@ sig
 				   
     val enterLoop: unit -> unit
     val enterFunction: level -> unit
-    val exitFunction: level * exp -> unit
+    val procEntryExit : level * exp -> unit
 
     val mkWhile: exp * exp -> exp
     val mkFor: access * exp * exp * exp -> exp
     val mkBreak: unit -> exp
 
+    val getResult : unit -> Frame.frag list
     val reset: unit -> unit
 end
 
@@ -77,6 +77,15 @@ structure Translate : TRANSLATE =
 struct
 
 fun ICE msg = ErrorMsg.impossible ("IR: " ^ msg)
+
+val lp_stack: Temp.label list list ref = ref []
+
+val frags: Frame.frag list ref = ref []
+
+fun reset () = (lp_stack := []; frags := []; Frame.reset ())
+
+fun getResult () = !frags
+
 
 (* Frame *)
 
@@ -168,9 +177,8 @@ fun mkInt i = Ex (T.CONST i)
 
 fun mkStr lit =
     let val lbl = Temp.newlabel ()
-    in
-	Frame.addStringLiteral(lbl, lit);
-	Ex (T.NAME lbl)
+    in frags := (Frame.STRING(lbl, lit)) :: !frags;
+       Ex (T.NAME lbl)
     end
 
 fun mkVar (((Level (_, _, id, _, _)), acc), lv_acc) =
@@ -381,8 +389,6 @@ fun mkIfThenElse (test, then', else') =
 
 exception BREAK
 
-val lp_stack : Temp.label list list ref = ref []
-
 fun enterLoop () =
     let val exit_lbl = Temp.newlabel ()
     in
@@ -395,16 +401,18 @@ fun lookLoop () = hd(hd(!lp_stack))
 
 fun enterFunction (lev: level) = lp_stack := []::(!lp_stack)
 
-fun exitFunction (lev: level, body: exp) =
-    (case lp_stack of
-	 ref (x::xs) => (
-	  if not (null x)
-	  then ICE "exitFunction: lp stack dirty"
-	  else lp_stack := xs)
-       | ref [] => ICE "exitFunction: lp stack empty";
-     Frame.addProc(levelFrame lev, T.MOVE (T.TEMP Frame.RV, unEx body)))
+fun procEntryExit (lev as Level(frm, parent, _, depth, _), body: exp) =
+    let val _ = case lp_stack of
+		    ref (x::xs) => (if not (null x)
+				    then ICE "exitFunction: lp stack dirty"
+				    else lp_stack := xs)
+		  | ref [] => ICE "exitFunction: lp stack empty";
+        val body = Frame.procEntryExit1(frm, T.MOVE (T.TEMP Frame.RV, unEx body))
+    in
+        frags := Frame.PROC {body=body, frame=frm} :: (!frags)
+    end
+  | procEntryExit _ = ICE "procEntryExit: Top level"
 
-fun reset () = (lp_stack := []; Frame.reset ())
 
 fun mkWhile (test, body) =
     let val loop_lbl = Temp.newlabel ()

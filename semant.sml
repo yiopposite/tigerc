@@ -560,7 +560,7 @@ and transDec(ve, te, lv, A.VarDec {name, escape=ref esc, typ=NONE, init, pos}) =
 				(ListPair.zipEq(formals, tl(Tr.formals lv)))
 		val _ = Tr.enterFunction lv
 		val (body_exp, body_ty) = transExp(ve', tenv, lv, body)
-		val _ = Tr.exitFunction (lv, body_exp)
+		val _ = Tr.procEntryExit (lv, body_exp)
 	    in
 		case (res, body_ty) of
 		    (T.UNIT, T.UNIT) => ()
@@ -583,13 +583,13 @@ fun transProg ast =
     let
 	val _ = Tr.reset()
 	val lev = Tr.newLevel (Tr.outermost,
-			       Temp.namedlabel "main",
+			       Temp.namedlabel "_Tiger_main",
 			       [], NONE)
 	val _ = Tr.enterFunction(lev)
 	val (e, t) = transExp(E.base_venv, E.base_tenv, lev, ast)
-	val _ = Tr.exitFunction(lev, e)
+	val _ = Tr.procEntryExit(lev, e)
     in
-	Frame.getResult ()
+	Tr.getResult ()
     end
 
 	(* interactive test *)
@@ -628,7 +628,7 @@ local
 	         | SOME s => if isXFile s then s::(loop ()) else loop ()
       in loop () before OS.FileSys.closeDir ds end
 
-  val test_dir = "../testcases"
+  val test_dir = "./testcases"
   val files = ListMergeSort.sort (op >) (dirList (test_dir, isTigerFile))
 
   val type_check = Semant.transProg o Parse.parse

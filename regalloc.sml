@@ -23,25 +23,34 @@ end
 (* test *)
 local
     exception FAILED of string
-    val prog = "let var i := 0 in while i < 5 do (i := i + 1); i end"
+    (*val prog = "let var i := 0 in while i < 5 do (i := i + 1); i end"*)
+    (*val prog = "print(\"Hello, world!\")"*)
+    (*val (Frame.PROC{body, frame})::_ = (FindEscape.findEscape absyn; Semant.transProg absyn)*)
+    val prog = "let function add(a:int,b:int,c:int): int=a+b+c in add(1,2,3) end"
     val absyn = Parse.parse_str prog
-    val [Frame.PROC{body, frame}] = (FindEscape.findEscape absyn; Semant.transProg absyn)
-    val stms = Canon.traceSchedule(Canon.basicBlocks(Canon.linearize body))
-    (*val _ = app (fn s => Printtree.printtree(TextIO.stdOut,s)) stms*)
+    val frags = (FindEscape.findEscape absyn; Semant.transProg absyn)
 
-    val format = Assem.format Frame.tempName
-    fun printinstr out instr = TextIO.output(out, format instr)
-    val instrs = List.concat(map (CodeGen.codegen frame) stms)
-    (*val _ = app (printinstr TextIO.stdOut) instrs*)
-    val instrs = Frame.procEntryExit(frame, instrs)
-    val _ = app (printinstr TextIO.stdOut) instrs
+    fun comp (Frame.PROC{body, frame}) =
+	let val stms = Canon.traceSchedule(Canon.basicBlocks(Canon.linearize body))
+	    val _ = app (fn s => Printtree.printtree(TextIO.stdOut,s)) stms
 
-    val (instrs, frame, alloc) = Regalloc.alloc(instrs, frame)
-    fun t2r a t = case Temp.Table.look(a, t) of
-		      SOME r => Frame.regName r
-		    | NONE => raise FAILED "Not found TT"
-    val format = Assem.format (t2r alloc)
-    fun printinstr instr = print(format instr)
-    val _ = app printinstr instrs
+	    val instrs = List.concat(map (CodeGen.codegen frame) stms)
+	    val _ = app (print o Assem.format Frame.tempName) instrs
+
+	    val instrs = Frame.procEntryExit(frame, instrs)
+	    (*val _ = app (print o Assem.format Frame.tempName) instrs*)
+
+	    val (instrs, frame, alloc) = Regalloc.alloc(instrs, frame)
+	    fun t2r a t = case Temp.Table.look(a, t) of
+			      SOME r => Frame.regName r
+			    | NONE => raise FAILED "Not found TT"
+	    val format = Assem.format (t2r alloc)
+	    val printinstr = print o format
+					 (*val _ = app printinstr instrs*)
+	in ()
+	end
+      | comp _ = ()
+
+    val _ = app comp frags
 in
 end

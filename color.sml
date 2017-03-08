@@ -28,12 +28,7 @@ struct
 			       moves = imoves} = interference
 	  (* constants w.r.t. Frame *)
 	  val K = length registers
-	  val allColors = S.fromList(List.tabulate(K, fn i => i))
-	  val colorRegVec = Vector.fromList registers
-	  val regColorMap = foldl (fn ((c, r), m) => Frame.RegTable.enter(m, r, c))
-				  FT.empty
-				  (ListPair.zipEq(List.tabulate(K, fn i => i), registers))
-
+	  val allColors = S.fromList registers
 
 	  (* precolored nodes *)
 	  val allnodes = G.nodes igraph
@@ -41,7 +36,7 @@ struct
 	  val (precolored, color) = foldl (fn (n, (s, m)) =>
 					      (case TT.look(initial, igtemp(n)) of
 						   SOME r => (GS.add(s, n),
-							      GT.enter(m, n, valOf(FT.look(regColorMap, r))))
+							      GT.enter(m, n, r))
 						 | NONE => (s, m)))
 					  (GS.empty, GT.empty)
 					  allnodes
@@ -63,9 +58,9 @@ struct
 				 " "
 				 (map (fn n => Temp.tempname(igtemp n)) l))
 			    ^ "\n")
-	  val _ = showNodeSet("allnotes", allnodes_set)
+	  (*val _ = showNodeSet("allnotes", allnodes_set)
 	  val _ = showNodeSet("precolored", precolored)
-	  val _ = showNodeSet("nonprecolored", nonprecolored)
+	  val _ = showNodeSet("nonprecolored", nonprecolored)*)
 
 	  (* adjacency list and degree *)
 	  val (adjList, degree) =
@@ -88,7 +83,7 @@ struct
 				       ^ "\n")
 		      end)
 		  (GS.listItems nonprecolored)
-	  val _ = showAdjLists()
+	  (*val _ = showAdjLists()*)
 	  (*val coloredNodes = S.fromList(G.nodes(igraph))*)
 
 			      
@@ -256,9 +251,8 @@ struct
 		  else ()
 
       in
-	  (*(initial, [])*)
 	  (foldl (fn (n, t) => case GT.look(color, n) of
-				   SOME c => TT.enter(t, igtemp n, Vector.sub(colorRegVec, c))
+				   SOME c => TT.enter(t, igtemp n, c)
 				 | NONE => t)
 		 TT.empty
 		 allnodes,

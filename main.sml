@@ -1,7 +1,7 @@
 structure Main = struct
 local
 
-fun compile filename outfilename =
+fun compile(filename, outfilename) =
     let val absyn = Parse.parse filename
         val frags = (FindEscape.findEscape absyn; Semant.transProg absyn)
 
@@ -26,7 +26,8 @@ fun compile filename outfilename =
 	    end
 	  | comp out (Frame.STRING(l, s)) =
 	    let	fun quote s = "\"" ^ concat (map Char.toCString (explode s)) ^ "\""
-	    in	TextIO.output(out, Temp.labelname l ^ ":\t.string " ^ quote s ^ "\n")
+	    in TextIO.output(out, Temp.labelname l ^ ":\t.long " ^ Int.toString(size s) ^ "\n");
+	       TextIO.output(out, "\t.ascii " ^ quote s ^ "\n")
 	    end
 
 	fun withOpenFile fname f =
@@ -40,9 +41,14 @@ fun compile filename outfilename =
 			 let fun pr s = TextIO.output(out, s)
 			 in  pr ("\t.file \"" ^ (#file(OS.Path.splitDirFile filename)) ^ "\"\n");
 			     pr "\t.text\n";
-			     pr "\t.global main\n";
+			     pr "\t.global _Tiger_main\n";
 			     app (comp out) frags end)
     end
+
+(* for testing only *)
+structure P = OS.Process
+fun assert(msg, cond) = if cond then () else raise (Fail msg)
+
 in
 
 fun main(arg0, argv) =
@@ -51,7 +57,7 @@ fun main(arg0, argv) =
 	let
 	    val f = #base(OS.Path.splitBaseExt (#file(OS.Path.splitDirFile path)))
 	    val f' = OS.Path.joinBaseExt {base=f, ext=SOME "s"}
-	in (compile path f'; OS.Process.success)
+	in (compile(path, f'); OS.Process.success)
 	   handle
      	   ErrorMsg.SyntaxError msg =>
 	    (print(msg ^ "\n"); OS.Process.failure)
@@ -65,5 +71,22 @@ fun main(arg0, argv) =
 	  OS.Process.failure)
 
 val _ = SMLofNJ.exportFn("tigerc", main)
+
+(* test *)
+fun run(path, expected) =
+    let
+	val f = #base(OS.Path.splitBaseExt (#file(OS.Path.splitDirFile path)))
+	val f' = OS.Path.joinBaseExt {base=f, ext=SOME "s"}
+    in
+	compile(path, f');
+	assert("linking " ^ path, P.isSuccess(P.system("gcc runtime.c " ^ f')));
+	assert("running " ^ path, (P.system "./a.out") = expected);
+	print("OK: " ^ path ^ "\n")
+    end
+
+val _ = run("./testcases/trivial.tig", 5)
+val _ = run("./testcases/hello.tig", 14)
+val _ = run("./testcases/callargs.tig", 6)
+
 end
 end

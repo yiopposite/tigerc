@@ -14,6 +14,9 @@ structure F = Frame
 
 fun ICE msg = ErrorMsg.impossible ("CODEGEN: " ^ msg)
 
+fun itoa i = if i < 0 then ("-" ^ (Int.toString(~i)))
+	     else Int.toString i
+
 fun codegen (frame: F.frame) (stm: T.stm) = let
     val ilist: A.instr list ref = ref []
 
@@ -32,19 +35,19 @@ fun codegen (frame: F.frame) (stm: T.stm) = let
 
     and munchStm (T.SEQ (s1, s2)) = (munchStm s1; munchStm s2)
       | munchStm (T.MOVE(T.MEM(T.BINOP(T.PLUS, e1, T.CONST i)), T.CONST j)) =
-	emit (A.OPER {asm="\tmovq\t$" ^ Int.toString j ^ ", " ^ Int.toString i ^ "(`d0)\n",
+	emit (A.OPER {asm="\tmovq\t$" ^ itoa j ^ ", " ^ itoa i ^ "(`d0)\n",
 		      src=[], dst=[munchExp e1], jmp=NONE})
       | munchStm (T.MOVE(T.MEM(T.BINOP(T.PLUS, T.CONST i, e1)), T.CONST j)) =
-	emit (A.OPER {asm="\tmovq\t$" ^ Int.toString j ^ ", " ^ Int.toString i ^ "(`d0)\n",
+	emit (A.OPER {asm="\tmovq\t$" ^ itoa j ^ ", " ^ itoa i ^ "(`d0)\n",
 		      src=[], dst=[munchExp e1], jmp=NONE})
       | munchStm (T.MOVE(T.MEM(T.BINOP(T.PLUS, e1, T.CONST i)), e2)) =
-	emit (A.OPER {asm="\tmovq\t`s0, " ^ Int.toString i ^ "(`d0)\n",
+	emit (A.OPER {asm="\tmovq\t`s0, " ^ itoa i ^ "(`d0)\n",
 		      src=[munchExp e2], dst=[munchExp e1], jmp=NONE})
       | munchStm (T.MOVE(e1, T.MEM(T.BINOP(T.PLUS, e2, T.CONST i)))) =
-	emit (A.OPER {asm="\tmovq\t" ^ Int.toString i ^ "(`s0), `d0\n",
+	emit (A.OPER {asm="\tmovq\t" ^ itoa i ^ "(`s0), `d0\n",
 		      src=[munchExp e2], dst=[munchExp e1], jmp=NONE})
       | munchStm (T.MOVE(e1, T.CONST i)) =
-	emit (A.OPER {asm="\tmovq\t$" ^ Int.toString i ^ ", `d0\n",
+	emit (A.OPER {asm="\tmovq\t$" ^ itoa i ^ ", `d0\n",
 		      src=[], dst=[munchExp(e1)], jmp=NONE})
       | munchStm (T.MOVE(e1, e2)) =
 	emit (A.MOVE {asm="\tmovq\t`s0, `d0\n",
@@ -58,6 +61,16 @@ fun codegen (frame: F.frame) (stm: T.stm) = let
 		      src=[], dst=[],
 		      jmp=SOME el})
       | munchStm (T.JUMP _) = ICE "munchStm JUMP"
+      | munchStm (T.CJUMP (p, T.CONST i, e, t, f)) = (
+	  emit (A.OPER {asm="\tcmp\t$" ^ itoa i ^ ", `s0\n",
+			src=[munchExp e], dst=[], jmp=NONE});
+	  emit (A.OPER {asm="\t" ^ relJ p ^ "\t`j0\n",
+			src=[], dst=[], jmp=SOME [t, f]}))
+      | munchStm (T.CJUMP (p, e, T.CONST i, t, f)) = (
+	  emit (A.OPER {asm="\tcmp\t$" ^ itoa i ^ ", `s0\n",
+			src=[munchExp e], dst=[], jmp=NONE});
+	  emit (A.OPER {asm="\t" ^ relJ p ^ "\t`j0\n",
+			src=[], dst=[], jmp=SOME [t, f]}))
       | munchStm (T.CJUMP (p, e1, e2, t, f)) = (
 	  emit (A.OPER {asm="\tcmp\t`s0, `s1\n",
 			src=[munchExp e2, munchExp e1], dst=[], jmp=NONE});
@@ -78,10 +91,10 @@ fun codegen (frame: F.frame) (stm: T.stm) = let
       | binP T.XOR    = "xor"
 
     and munchExp (T.MEM (T.BINOP(T.PLUS, e, T.CONST i))) =
-	result (fn r => emit (A.OPER {asm="\tmovq\t" ^ Int.toString i ^ "(`s0)" ^ ", `d0\n",
+	result (fn r => emit (A.OPER {asm="\tmovq\t" ^ itoa i ^ "(`s0)" ^ ", `d0\n",
 				      src=[munchExp e], dst=[r], jmp=NONE}))
       | munchExp (T.MEM (T.BINOP(T.PLUS, T.CONST i, e))) =
-	result (fn r => emit (A.OPER {asm="\tmovq\t" ^ Int.toString i ^ "(`s0)" ^ ", `d0\n",
+	result (fn r => emit (A.OPER {asm="\tmovq\t" ^ itoa i ^ "(`s0)" ^ ", `d0\n",
 				      src=[munchExp e], dst=[r], jmp=NONE}))
       | munchExp (T.MEM e) =
 	result (fn r => emit (A.MOVE {asm="\tmovq\t`s0, `d0\n", src=munchExp e, dst=r}))
@@ -94,23 +107,46 @@ fun codegen (frame: F.frame) (stm: T.stm) = let
 			 emit (A.MOVE {asm="\tmovq\t`s0, `d0\n", src=F.RAX, dst=r})))
       | munchExp (T.BINOP(opc, e1, T.CONST i)) =
 	result (fn r => (emit (A.MOVE {asm="\tmovq\t`s0, `d0\n", src=munchExp e1, dst=r});
-			 emit (A.OPER {asm="\t" ^ binP opc ^ "\t$" ^ Int.toString i ^ ", `d0\n",
+			 emit (A.OPER {asm="\t" ^ binP opc ^ "\t$" ^ itoa i ^ ", `d0\n",
 				       src=[r], dst=[r], jmp=NONE})))
       | munchExp (T.BINOP(opc, e1, e2)) =
 	result (fn r => (emit (A.MOVE {asm="\tmovq\t`s0, `d0\n", src=munchExp e1, dst=r});
 			 emit (A.OPER {asm="\t" ^ binP opc ^ "\t`s0, `d0\n",
 				       src=[munchExp e2, r], dst=[r], jmp=NONE})))
       | munchExp (T.CALL(T.NAME l, el)) =
-	result (fn r => (emit (A.OPER {asm="\tcall\t" ^ Temp.labelname l ^ "\n",
-				       src=map munchExp el,
-				       dst=[F.RAX],
-				       jmp=NONE})))
+	let val k = length el - length F.argregs
+	    val args = map munchExp el
+	    val _ = if k > 0 then
+			app (fn t =>
+				emit (A.OPER {asm="\tpushq\t`s0\n",
+					      src=[t], dst=[F.SP], jmp=NONE}))
+			    (List.take(rev args, k))
+		    else ()
+	    val regs = ListPair.map
+			   (fn (t, r) => (
+			       emit (A.MOVE {asm="\tmovq\t`s0, `d0\n",
+					     src=t, dst=r});
+			       r))
+			   (if k > 0 then List.drop(args, k) else args,
+			    F.argregs)
+	in result (fn r => (emit (A.OPER {asm="\tcall\t" ^ Temp.labelname l ^ "\n",
+					  src=regs,
+					  dst=F.callersaves,
+					  jmp=NONE});
+			    if k > 0 then
+				emit (A.OPER {asm="\taddq\t$"
+						  ^ itoa (k * F.wordSize)
+						  ^ ", `d0\n",
+					      src=[], dst=[F.SP], jmp=NONE})
+			    else ();
+			    emit (A.MOVE {asm="\tmovq\t`s0, `d0\n", src=F.RV, dst=r})))
+	end
       | munchExp (T.CALL(_, el)) = ICE "munchExp CALL"
       | munchExp (T.NAME l) =
 	result (fn r => emit (A.OPER {asm="\tmovq\t$" ^ Temp.labelname l ^ ", `d0\n",
 				      src=[], dst=[r], jmp=NONE}))
       | munchExp (T.CONST i) =
-	result (fn r => emit (A.OPER {asm="\tmovq\t$" ^ Int.toString i ^ ", `d0\n",
+	result (fn r => emit (A.OPER {asm="\tmovq\t$" ^ itoa i ^ ", `d0\n",
 				      src=[], dst=[r], jmp=NONE}))
       | munchExp (T.TEMP r) = r
       | munchExp (T.ESEQ _) = ICE "munchExp ESEQ"

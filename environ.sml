@@ -57,7 +57,7 @@ struct
 					   formals = [],
 					   result = T.UNIT})
 	    ,(S.symbol("getchar"), FunEntry {level = Translate.outermost,
-					     label = Temp.namedlabel "getchar",
+					     label = Temp.namedlabel "_Tiger_getchar",
 					     formals = [],
 					     result = T.STRING})
 	    ,(S.symbol("ord"), FunEntry {level = Translate.outermost,
