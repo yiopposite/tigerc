@@ -1,0 +1,7 @@
+/* error: syntax error, dangling break. */
+
+let
+	function noloop() = (break)
+in 
+	for i:=0 to 100 do noloop()
+end

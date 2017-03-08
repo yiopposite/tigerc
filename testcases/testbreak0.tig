@@ -1,0 +1,10 @@
+/* valid break */
+
+let
+	function f() = while 1 do (print("calling f"); break)
+in 
+	for i:=0 to 100 do (
+	    f();
+	    break
+	)
+end

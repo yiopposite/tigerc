@@ -1,0 +1,219 @@
+structure A = Absyn
+structure S = Symbol
+
+fun exp_list [e] = e
+  | exp_list es =
+    let
+	fun mkpair (e as A.NilExp) = (e, ~1)
+          | mkpair (e as A.IntExp _) = (e, ~1)
+          | mkpair (e as A.StringExp (_, p)) = (e, p)
+          | mkpair (e as A.CallExp {pos=p, ...}) = (e, p)
+          | mkpair (e as A.OpExp {pos=p, ...}) = (e, p)
+          | mkpair (e as A.RecordExp {pos=p, ...}) = (e, p)
+          | mkpair (e as A.SeqExp _) = (e, ~1)
+          | mkpair (e as A.AssignExp {pos=p, ...}) = (e, p)
+          | mkpair (e as A.IfExp {pos=p, ...}) = (e, p)
+          | mkpair (e as A.WhileExp {pos=p, ...}) = (e, p)
+          | mkpair (e as A.ForExp {pos=p, ...}) = (e, p)
+          | mkpair (e as A.BreakExp p) = (e, p)
+          | mkpair (e as A.LetExp {pos=p, ...}) = (e, p)
+          | mkpair (e as A.ArrayExp {pos=p, ...}) = (e, p)
+          | mkpair (e as A.VarExp (A.SimpleVar (_, p))) = (e, p)
+          | mkpair (e as A.VarExp (A.FieldVar (_, _, p))) = (e, p)
+          | mkpair (e as A.VarExp (A.SubscriptVar (_, _, p))) = (e, p)
+    in
+	A.SeqExp (map mkpair (rev es))
+    end
+
+fun dec_list ds =
+    foldl (fn (x, acc) => case x of
+			      A.VarDec v => x :: acc
+			    | A.TypeDec t =>
+			      (case acc of
+				   (A.TypeDec t')::_ => (A.TypeDec(hd(t)::t'))::tl(acc)
+				 | _ => x::acc)
+			    | A.FunctionDec f =>
+			      (case acc of
+				   (A.FunctionDec f')::_ => (A.FunctionDec(hd(f)::f'))::tl(acc)
+				 | _ => x::acc))
+	  [] ds
+
+datatype sub = FieldSub of A.symbol * A.pos
+             | IndexSub of A.exp * A.pos
+
+%%
+%name Tiger
+
+%term EOF
+    | ID of string
+    | INT of int | STRING of string
+    | COMMA | COLON | SEMICOLON | LPAREN | RPAREN | LBRACK | RBRACK
+    | LBRACE | RBRACE | DOT
+    | PLUS | MINUS | TIMES | DIVIDE | EQ | NEQ | LT | LE | GT | GE
+    | AND | OR | ASSIGN
+    | ARRAY | IF | THEN | ELSE | WHILE | FOR | TO | DO | LET | IN | END | OF
+    | BREAK | NIL
+    | FUNCTION | VAR | TYPE
+    | UMINUS
+
+%nonterm  program of A.exp
+	| exps of A.exp list | exp of A.exp
+	| lvalue of A.var | subscript of sub | subscripts of sub list
+	| funcall of A.exp | arglist_ of A.exp list
+	| recval of A.exp | recval_ of (A.symbol * A.exp * A.pos) list | recvalfld_ of A.symbol * A.exp * A.pos
+	| decls of A.dec list | decl of A.dec
+	| tydecl of A.dec
+	| ty of A.ty
+	| tyfields of A.field list | tyfields_ of A.field list | tyfield_ of A.field
+	| vardecl of A.dec | fundecl of A.dec
+
+%start program
+
+%pos int
+%verbose
+%eop EOF
+%noshift EOF
+
+%keyword WHILE FOR TO BREAK LET IN END FUNCTION VAR TYPE ARRAY IF THEN ELSE
+	DO OF NIL
+
+%prefer THEN ELSE LPAREN
+
+%value ID ("bogus")
+%value INT (1)
+%value STRING ("")
+
+%right DO
+%nonassoc THEN
+%nonassoc ELSE
+%nonassoc ASSIGN
+%left OR
+%left AND
+%nonassoc EQ NEQ LT LE GT GE
+%left PLUS MINUS
+%left TIMES DIVIDE
+%nonassoc OF
+%nonassoc UMINUS
+
+%%
+
+program	: exp			(exp)
+
+exps:	exps SEMICOLON exp	(exp::exps)
+   |	exp			([exp])
+
+exp:	INT			(A.IntExp INT)
+   |	STRING			(A.StringExp (STRING, STRINGleft))
+   |	NIL			(A.NilExp)
+   |	LPAREN RPAREN		(A.SeqExp [])
+   |	lvalue			(A.VarExp lvalue)
+   |	recval			(recval)
+   |	funcall			(funcall)
+   |	ID LBRACK exp RBRACK OF exp	(A.ArrayExp {typ=S.symbol(ID), size=exp1, init=exp2, pos=IDleft})
+   |	lvalue ASSIGN exp	(A.AssignExp {var=lvalue, exp=exp1, pos=ASSIGNleft})
+   |	IF exp THEN exp ELSE exp (A.IfExp {test=exp1, then'=exp2, else'=SOME exp3, pos=IFleft})
+   |	IF exp THEN exp		(A.IfExp {test=exp1, then'=exp2, else'=NONE, pos=IFleft})
+   |	exp AND exp		(A.IfExp {test=exp1, then'=exp2, else'=SOME (A.IntExp 0), pos=ANDleft})
+   |	exp OR exp		(A.IfExp {test=exp1, then'=A.IntExp 1, else'=SOME exp2, pos=ORleft})
+   |	WHILE exp DO exp	(A.WhileExp {test=exp1, body=exp2, pos=WHILEleft})
+   |	FOR ID ASSIGN exp TO exp DO exp (A.ForExp {var=S.symbol ID,
+						   escape=ref false,
+						   lo=exp1,
+						   hi=exp2,
+						   body=exp3,
+						   pos=FORleft})
+   |	BREAK	(A.BreakExp BREAKleft)
+   |	MINUS exp %prec UMINUS (A.OpExp {left=A.IntExp 0, oper=A.MinusOp, right=exp, pos=MINUSleft})
+   |	exp PLUS exp	(A.OpExp {left=exp1, oper=A.PlusOp, right=exp2, pos=PLUSleft})
+   |	exp MINUS exp	(A.OpExp {left=exp1, oper=A.MinusOp, right=exp2, pos=MINUSleft})
+   |	exp TIMES exp	(A.OpExp {left=exp1, oper=A.TimesOp, right=exp2, pos=TIMESleft})
+   |	exp DIVIDE exp	(A.OpExp {left=exp1, oper=A.DivideOp, right=exp2, pos=DIVIDEleft})
+   |	exp EQ exp	(A.OpExp {left=exp1, oper=A.EqOp, right=exp2, pos=EQleft})
+   |	exp NEQ exp	(A.OpExp {left=exp1, oper=A.NeqOp, right=exp2, pos=NEQleft})
+   |	exp LT exp	(A.OpExp {left=exp1, oper=A.LtOp, right=exp2, pos=LTleft})
+   |	exp LE exp	(A.OpExp {left=exp1, oper=A.LeOp, right=exp2, pos=LEleft})
+   |	exp GT exp	(A.OpExp {left=exp1, oper=A.GtOp, right=exp2, pos=GTleft})
+   |	exp GE exp	(A.OpExp {left=exp1, oper=A.GeOp, right=exp2, pos=GEleft})
+   |	LET decls IN exps END	(A.LetExp {decs=dec_list decls, body=exp_list(exps), pos=LETleft})
+   |	LET decls IN END	(A.LetExp {decs=dec_list decls, body=A.SeqExp [], pos=LETleft})
+   |	LPAREN exps RPAREN (exp_list exps)
+
+lvalue: ID (A.SimpleVar (S.symbol ID, IDleft))
+      | ID subscripts	(
+	    foldl (fn (s, v) => case s of
+				    FieldSub (f, p) => A.FieldVar (v, f, p)
+				  | IndexSub (e, p) => A.SubscriptVar (v, e, p))
+		  (A.SimpleVar (S.symbol ID, IDleft))
+		  (rev subscripts))
+
+subscript:      DOT ID (FieldSub (S.symbol ID, IDleft))
+        |       LBRACK exp RBRACK (IndexSub (exp, LBRACKright))
+
+subscripts: subscripts subscript (subscript::subscripts)
+	  | subscript            ([subscript])
+
+funcall: ID LPAREN RPAREN	   (A.CallExp {func=S.symbol(ID), args=[], pos=IDleft})
+   |	 ID LPAREN arglist_ RPAREN (A.CallExp {func=S.symbol(ID), args=arglist_, pos=IDleft})
+
+arglist_: exp COMMA arglist_	(exp::arglist_)
+   |	exp			([exp])
+
+recval: ID LBRACE recval_ RBRACE (A.RecordExp {fields = recval_, typ=S.symbol ID, pos=IDleft})
+   |	ID LBRACE RBRACE	 (A.RecordExp {fields = [],	 typ=S.symbol ID, pos=IDleft})
+
+recval_: recvalfld_		([recvalfld_])
+   |	 recvalfld_ COMMA recval_	(recvalfld_::recval_)
+
+recvalfld_: ID EQ exp	((S.symbol ID, exp, IDleft))
+
+decls:	decls decl	(decl::decls)
+   |	([])
+
+decl:	tydecl	(tydecl)
+   |	vardecl	(vardecl)
+   |	fundecl	(fundecl)
+
+tydecl: TYPE ID EQ ty	(A.TypeDec [{name = S.symbol ID,
+				     ty = ty,
+				     pos = TYPEleft}])
+
+ty:	ID (A.NameTy (S.symbol ID, IDleft))
+   |	LBRACE tyfields RBRACE (A.RecordTy tyfields)
+   |	ARRAY OF ID (A.ArrayTy (S.symbol ID, ARRAYleft))
+
+tyfields: tyfields_ (rev tyfields_)
+   | 	([])
+
+tyfields_: tyfield_	([tyfield_])
+   | tyfields_ COMMA tyfield_	(tyfield_::tyfields_)
+
+tyfield_: ID COLON ID	({name = S.symbol(ID1),
+			  escape = ref false,
+			  typ = S.symbol(ID2),
+			  pos = ID1left})
+
+vardecl:VAR ID ASSIGN exp
+	    (A.VarDec {name = S.symbol ID,
+		       escape = ref false,
+		       typ = NONE,
+		       init = exp,
+		       pos = VARleft})
+   |	VAR ID COLON ID ASSIGN exp
+	    (A.VarDec {name = S.symbol ID1,
+		       escape = ref false,
+		       typ = SOME (S.symbol ID2, ID2left),
+		       init = exp,
+		       pos = VARleft})
+
+fundecl:FUNCTION ID LPAREN tyfields RPAREN EQ exp
+		 (A.FunctionDec [{name = S.symbol ID,
+				  params = tyfields,
+				  result = NONE,
+				  body = exp,
+				  pos = FUNCTIONleft}])
+   |    FUNCTION ID LPAREN tyfields RPAREN COLON ID EQ exp
+		 (A.FunctionDec [{name = S.symbol ID1,
+				  params = tyfields,
+				  result = SOME(S.symbol ID2, ID2left),
+				  body = exp,
+				  pos = FUNCTIONleft}])
