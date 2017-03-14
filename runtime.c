@@ -28,6 +28,16 @@ int stringEqual(struct string *s, struct string *t)
  return 1;
 }
 
+int _Tiger_strcmp(struct string *s, struct string *t)
+{int i, sn = s->length, tn = t->length, n = sn < tn ? sn:tn;
+  for(i=0;i<n;i++) {
+    unsigned c = s->chars[i];
+    unsigned d = t->chars[i];
+    if (c < d) return -1; else if (c > d) return 1;
+  }
+  return sn < tn ? -1 : sn == tn ? 0 : 1;
+}
+
 void print(struct string *s)
 {int i; unsigned char *p=s->chars;
  for(i=0;i<s->length;i++,p++) putchar(*p);

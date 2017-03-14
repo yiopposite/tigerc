@@ -4,4 +4,4 @@ runtime=${install}/runtime.c
 smlbin=/usr/local/sml/bin
 
 sfile="`basename "$1" .tig`.s"
-$smlbin/.run-sml @SMLload=$install/${heap}.x86-linux "$@" && gcc $sfile $runtime
+$smlbin/.run-sml @SMLload=$install/${heap}.x86-linux "$@" && gcc -g $sfile $runtime

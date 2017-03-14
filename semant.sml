@@ -599,8 +599,6 @@ fun test (prog: string) =
 	fun dump (Frame.PROC {body, frame}) = (
 	    print("PROC: " ^ Temp.labelname (Frame.name frame)
 		  ^ " (" ^ Frame.fname frame ^ ")");
-	    app print ["[", String.concatWith ", " (map Frame.accessToString (Frame.formals frame)), "] "];
-	    app print ["[", String.concatWith ", " (map Frame.accessToString (Frame.locals frame)), "]\n"];
 	    Printtree.printtree (TextIO.stdOut, body))
 	  | dump (Frame.STRING (lab, lit)) =
 	    print("STRING: " ^ Temp.labelname lab ^ ": \"" ^ lit ^ "\"\n")

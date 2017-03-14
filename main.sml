@@ -12,17 +12,14 @@ fun compile(filename, outfilename) =
 		val stms' = Canon.traceSchedule(Canon.basicBlocks stms)
 		(* val _ = app (fn s => Printtree.printtree(out,s)) stms'; *)
 		val instrs = List.concat(map (CodeGen.codegen frame) stms')
-		val instrs = Frame.procEntryExit(frame, instrs)
+		val instrs = Frame.procEntryExit2(frame, instrs)
 		val (instrs, frame, alloc) = Regalloc.alloc(instrs, frame)
+		val {prolog, body, epilog} = Frame.procEntryExit3(frame, instrs)
 		val format = Assem.format(fn t => Frame.regName(valOf(Temp.Table.look(alloc, t))))
 		fun pr s = TextIO.output (out, s)
-	    in  pr(Temp.labelname(Frame.name frame)
-		   ^ ":\t/* "
-		   ^ Frame.fname frame
-		   ^ " [" ^ String.concatWith ", " (map Frame.accessToString (Frame.formals frame)) ^ "]"
-		   ^ " [" ^ String.concatWith ", " (map Frame.accessToString (Frame.locals frame)) ^ "]"
-		   ^ " */\n");
-		app (fn i => TextIO.output(out,format i)) instrs
+	    in  pr prolog;
+		app (fn i => TextIO.output(out,format i)) instrs;
+		pr epilog
 	    end
 	  | comp out (Frame.STRING(l, s)) =
 	    let	fun quote s = "\"" ^ concat (map Char.toCString (explode s)) ^ "\""

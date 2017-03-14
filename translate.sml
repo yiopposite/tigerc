@@ -313,7 +313,7 @@ fun mkIntLe (lh, rh) = Cx (fn (t, f) => T.CJUMP (T.LE, unEx lh, unEx rh, t, f))
 fun mkIntGt (lh, rh) = Cx (fn (t, f) => T.CJUMP (T.GT, unEx lh, unEx rh, t, f))
 fun mkIntGe (lh, rh) = Cx (fn (t, f) => T.CJUMP (T.GE, unEx lh, unEx rh, t, f))
 
-val strcmp = Temp.namedlabel "__StrCmp"
+val strcmp = Temp.namedlabel "_Tiger_strcmp"
 
 fun mkStrLt (lh, rh) =
     Cx (fn (t, f) => T.CJUMP (T.LT,

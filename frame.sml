@@ -36,11 +36,14 @@ sig
 		  | STRING of Temp.label * string
 
     val procEntryExit1: frame * Tree.stm -> Tree.stm
-    val procEntryExit: frame * Assem.instr list-> Assem.instr list
+    val procEntryExit2: frame * Assem.instr list-> Assem.instr list
+    val procEntryExit3 : frame * Assem.instr list ->
+			 {prolog: string,
+                          body: Assem.instr list,
+                          epilog: string}
 
     (* test *)
     val fname: frame -> string
-    val accessToString: access -> string
     val locals: frame -> access list
 end
 
@@ -96,14 +99,18 @@ datatype frame = Frame of {name: Temp.label,
 			   tos: int ref,
 			   fname: string}
 
+fun accessToString (InFrame i) = "m" ^ Int.toString i
+  | accessToString (InReg t) = Temp.tempname t
+
 fun newFrame {name, formals, fname} =
     let
 	val (formals', offset) =
 	    foldl (fn (true, (formals, offset))
-		      => ((InFrame (~offset))::formals, offset + wordSize)
+		      => let val oft = offset + wordSize
+			 in ((InFrame (~oft))::formals, oft) end
 		  | (false, (formals, offset))
 		    => ((InReg (Temp.newtemp()))::formals, offset))
-		  ([], 8) formals
+		  ([], 0) formals
     in
 	Frame {name = name,
 	       formals = rev formals',
@@ -117,7 +124,8 @@ fun fname (Frame {fname, ...}) = fname
 fun formals (Frame {formals, ...}) = formals
 fun locals (Frame {locals, ...}) = locals
 fun allocLocal (Frame {tos, ...}) esc =
-    if esc then (InFrame (~(!tos))) before tos := !tos + wordSize
+    if esc then let val oft = !tos+wordSize
+		in (InFrame (~oft)) before tos := oft end
     else InReg (Temp.newtemp())
 
 fun tempName t =
@@ -161,11 +169,31 @@ fun procEntryExit1(Frame {formals as (sl::rest),locals,...}, body) =
   | procEntryExit1(Frame {formals=nil,locals,...}, body) =
     body
 
-fun accessToString (InFrame i) = "m" ^ Int.toString i
-  | accessToString (InReg t) = Temp.tempname t
-
 structure A = Assem
 
+fun procEntryExit2(frame, body) =
+    body @ [A.OPER {asm="", dst=[],
+		    src=[FP,SP,RBX,R12,R13,R14,R15](*calleesaves*),
+		    jmp=SOME []}]
+
+fun procEntryExit3 (Frame {name, formals, locals, tos, fname}, body) =
+    let val sp = !tos
+    in
+        {prolog=
+	 Temp.labelname(name) ^ ":\t/* " ^ fname
+	 ^ " [" ^ String.concatWith ", " (map accessToString formals) ^ "]"
+	 ^ " [" ^ String.concatWith ", " (map accessToString locals) ^ "]"
+	 ^ " */\n"
+         ^ "\tpushq\t%rbp\n"
+         ^ "\tmovq\t%rsp, %rbp\n"
+         ^ (if sp <> 0 then ("\tsubq\t$" ^ (Int.toString sp) ^ ", %rsp\n") else ""),
+         body=body,
+         epilog=
+	 (if sp <> 0 then ("\taddq\t$" ^ (Int.toString sp) ^ ", %rsp\n") else "")
+	 ^ "\tleave\n"
+         ^ "\tret\n"}
+    end
+(*
 fun procEntryExit(frame, body) =
     [A.OPER {asm="\tpushq\t`s0\n", src=[FP], dst=[SP], jmp=NONE},
      A.MOVE {asm="\tmovq\t`s0, `d0\n", src=SP, dst=FP}
@@ -173,7 +201,7 @@ fun procEntryExit(frame, body) =
     @ body
     @ [A.OPER {asm="\tleave\n", src=[FP], dst=[SP, FP], jmp=NONE},
        A.OPER {asm="\tret\n", src=[], dst=[], jmp=NONE}]
-
+*)
 end
 
 structure Frame : FRAME = X86Frame
