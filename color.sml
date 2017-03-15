@@ -260,27 +260,27 @@ struct
       end
 end
 
-(*
-(* test *)
+
+(* test
 local
     exception ASSERT of string
     fun assert msg cond = ignore (cond orelse raise ASSERT msg)
 
     val prog = "let var i := 0 in while i < 5 do (i := i + 1) end"
+    val prog="let function add(a: int, b: int, c:int) : int = a + b + c in print(chr(ord(\"0\")+add(1,2,3))) end"
     val absyn = Parse.parse_str prog
-    val [Frame.PROC{body, frame}] = (FindEscape.findEscape absyn; Semant.transProg absyn)
+    val (Frame.PROC{body, frame})::_ = (FindEscape.findEscape absyn; Semant.transProg absyn)
     val stms = Canon.traceSchedule(Canon.basicBlocks(Canon.linearize body))
-    (*val _ = app (fn s => Printtree.printtree(TextIO.stdOut,s)) stms*)
+    val _ = app (fn s => Printtree.printtree(TextIO.stdOut,s)) stms
 
     val format = Assem.format Frame.tempName
     fun printinstr out instr = TextIO.output(out, format instr)
 
     val instrs = List.concat(map (CodeGen.codegen frame) stms)
-    (*val _ = app (printinstr TextIO.stdOut) instrs*)
-    val instrs' = Frame.procEntryExit(frame, instrs)
-    val _ = app (printinstr TextIO.stdOut) instrs'
+    val instrs = Frame.procEntryExit2(frame, instrs)
+    val _ = app (printinstr TextIO.stdOut) instrs
 
-    val (fgraph as Flow.FGRAPH{control,def,use,ismove}, nlist, imap) = Flow.instr2graph instrs'
+    val (fgraph as Flow.FGRAPH{control,def,use,ismove}, nlist, imap) = Flow.instr2graph instrs
 
     fun show_fnode out n =
 	let fun p g n = String.concatWith " " (map (fn i => Graph.nodename i) (g n))
@@ -298,11 +298,11 @@ local
 			       ^ String.concatWith " " [succs, preds, defs, uses, move]
 			       ^ "\t\t" ^ instr)
 	end
-    (*val _ = app (show_fnode TextIO.stdOut) nlist*)
+    val _ = app (show_fnode TextIO.stdOut) nlist
 
     val (igraph as Liveness.IGRAPH {graph, tnode, gtemp, moves}, live_outs, spillCosts) =
 	Liveness.interferenceGraph(fgraph, nlist)
-    val _ = Liveness.show(TextIO.stdOut, igraph, spillCosts)
+    (*val _ = Liveness.show(TextIO.stdOut, igraph, spillCosts)*)
 
     val (alloc, spills) = Color.color {
 	    interference = igraph,
@@ -327,4 +327,4 @@ local
 
 in
 end
-*)
+ *)

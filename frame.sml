@@ -9,6 +9,7 @@ sig
     val name: frame -> Temp.label
     val formals: frame -> access list
     val allocLocal: frame -> bool -> access
+    val frameSize: frame -> int
 
     val FP: Temp.temp
     val SP: Temp.temp
@@ -51,7 +52,6 @@ structure X86Frame : FRAME =
 struct
 
 val wordSize = 8
-val offsetParam = 16 (* offset of first parameter from FP *)
 
 val registerNames = #[
 	"%rax", "%rcx", "%rdx", "%rbx", "%rbp", "%rsp", "%rsi", "%rdi",
@@ -127,6 +127,7 @@ fun allocLocal (Frame {tos, ...}) esc =
     if esc then let val oft = !tos+wordSize
 		in (InFrame (~oft)) before tos := oft end
     else InReg (Temp.newtemp())
+fun frameSize (Frame {tos, ...}) = !tos
 
 fun tempName t =
     case Temp.Table.look(tempMap, t) of
@@ -139,12 +140,10 @@ fun exp (InFrame offset) fp = Tree.MEM (Tree.BINOP (Tree.PLUS,
   | exp (InReg reg) _ = Tree.TEMP reg
 
 
-val staticLink = Tree.CONST offsetParam
-
 fun fp 0 = Tree.TEMP FP
   | fp nested_level = Tree.MEM (Tree.BINOP (Tree.PLUS,
 					    fp (nested_level - 1),
-					    staticLink))
+					    Tree.CONST ~8))
 
 datatype frag = PROC of {body: Tree.stm, frame: frame}
 	      | STRING of Temp.label * string

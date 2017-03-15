@@ -429,7 +429,7 @@ fun mkWhile (test, body) =
     end
 
 fun mkFor (acc: access, lo, hi, body) =
-    let val loop_lbl = lookLoop ()
+    let val loop_lbl = Temp.newlabel ()
 	and exit_lbl = lookLoop ()
 	and body_lbl = Temp.newlabel ()
 	val var = Frame.exp (#2(acc)) (T.TEMP Frame.FP)
@@ -440,6 +440,7 @@ fun mkFor (acc: access, lo, hi, body) =
 		 T.CJUMP(T.GT, var, unEx hi, exit_lbl, body_lbl),
 		 T.LABEL body_lbl,
 		 unNx body,
+		 T.MOVE (var, T.BINOP(T.PLUS, var, T.CONST 1)),
 		 T.JUMP (T.NAME loop_lbl, [loop_lbl]),
 		 T.LABEL exit_lbl])
     end

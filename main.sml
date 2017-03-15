@@ -42,9 +42,29 @@ fun compile(filename, outfilename) =
 			     app (comp out) frags end)
     end
 
-(* for testing only *)
+(* test *)
 structure P = OS.Process
 fun assert(msg, cond) = if cond then () else raise (Fail msg)
+
+fun run(path, expected) =
+    let
+	val f = #base(OS.Path.splitBaseExt (#file(OS.Path.splitDirFile path)))
+	val f' = OS.Path.joinBaseExt {base=f, ext=SOME "s"}
+    in
+	compile(path, f');
+	assert("linking " ^ path, P.isSuccess(P.system("gcc runtime.c " ^ f')));
+	assert("running " ^ path, (P.system "./a.out") = expected);
+	print("OK: " ^ path ^ "\n")
+    end
+
+val _ = run("./testcases/trivial.tig", 5)
+val _ = run("./testcases/hello.tig", 14)
+val _ = run("./testcases/callargs.tig", 6)
+val _ = run("./testcases/callargs1.tig", 1)
+val _ = run("./testcases/array.tig", 3)
+val _ = run("./testcases/forloop.tig", 101)
+val _ = run("./testcases/record.tig", 255)
+val _ = run("./testcases/queens.tig", 92)
 
 in
 
@@ -68,22 +88,6 @@ fun main(arg0, argv) =
 	  OS.Process.failure)
 
 val _ = SMLofNJ.exportFn("tigerc", main)
-
-(* test *)
-fun run(path, expected) =
-    let
-	val f = #base(OS.Path.splitBaseExt (#file(OS.Path.splitDirFile path)))
-	val f' = OS.Path.joinBaseExt {base=f, ext=SOME "s"}
-    in
-	compile(path, f');
-	assert("linking " ^ path, P.isSuccess(P.system("gcc runtime.c " ^ f')));
-	assert("running " ^ path, (P.system "./a.out") = expected);
-	print("OK: " ^ path ^ "\n")
-    end
-
-val _ = run("./testcases/trivial.tig", 5)
-val _ = run("./testcases/hello.tig", 14)
-val _ = run("./testcases/callargs.tig", 6)
 
 end
 end

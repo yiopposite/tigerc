@@ -34,31 +34,50 @@ fun codegen (frame: F.frame) (stm: T.stm) = let
       | relJ T.UGE = "jnb"
 
     and munchStm (T.SEQ (s1, s2)) = (munchStm s1; munchStm s2)
+      (* STORE *)
       | munchStm (T.MOVE(T.MEM(T.BINOP(T.PLUS, e1, T.CONST i)), T.CONST j)) =
 	emit (A.OPER {asm="\tmovq\t$" ^ itoa j ^ ", " ^ itoa i ^ "(`s0)\n",
 		      src=[munchExp e1], dst=[], jmp=NONE})
       | munchStm (T.MOVE(T.MEM(T.BINOP(T.PLUS, T.CONST i, e1)), T.CONST j)) =
 	emit (A.OPER {asm="\tmovq\t$" ^ itoa j ^ ", " ^ itoa i ^ "(`s0)\n",
 		      src=[munchExp e1], dst=[], jmp=NONE})
+
       | munchStm (T.MOVE(T.MEM(T.BINOP(T.PLUS, e1, T.CONST i)), e2)) =
 	emit (A.OPER {asm="\tmovq\t`s1, " ^ itoa i ^ "(`s0)\n",
 		      src=[munchExp e1, munchExp e2], dst=[], jmp=NONE})
       | munchStm (T.MOVE(T.MEM(T.BINOP(T.PLUS, T.CONST i, e1)), e2)) =
 	emit (A.OPER {asm="\tmovq\t`s1, " ^ itoa i ^ "(`s0)\n",
 		      src=[munchExp e1, munchExp e2], dst=[], jmp=NONE})
+
+      | munchStm (T.MOVE(T.MEM(e1), T.MEM(e2))) =
+	ICE "munchStm MOVE MEM to MEM"
+
+      | munchStm (T.MOVE(T.MEM(e1), e2)) =
+	emit (A.OPER {asm="\tmovq\t`s1, (`s0)\n",
+		      src=[munchExp e1, munchExp e2], dst=[], jmp=NONE})
+
+      (* LOAD *)
       | munchStm (T.MOVE(e1, T.MEM(T.BINOP(T.PLUS, e2, T.CONST i)))) =
 	emit (A.OPER {asm="\tmovq\t" ^ itoa i ^ "(`s0), `d0\n",
 		      src=[munchExp e2], dst=[munchExp e1], jmp=NONE})
       | munchStm (T.MOVE(e1, T.MEM(T.BINOP(T.PLUS, T.CONST i, e2)))) =
 	emit (A.OPER {asm="\tmovq\t" ^ itoa i ^ "(`s0), `d0\n",
 		      src=[munchExp e2], dst=[munchExp e1], jmp=NONE})
+
+      | munchStm (T.MOVE(e1, T.MEM(e2))) =
+	emit (A.OPER {asm="\tmovq\t(`s0), `d0\n",
+		      src=[munchExp e2], dst=[munchExp e1], jmp=NONE})
+
+      (* MOVE *)
       | munchStm (T.MOVE(e1, T.CONST i)) =
 	emit (A.OPER {asm="\tmovq\t$" ^ itoa i ^ ", `d0\n",
 		      src=[], dst=[munchExp(e1)], jmp=NONE})
+
       | munchStm (T.MOVE(e1, e2)) =
 	emit (A.MOVE {asm="\tmovq\t`s0, `d0\n",
 		      src=munchExp(e2),
 		      dst=munchExp(e1)})
+
       | munchStm (T.EXP e) = (ignore (munchExp e))
       | munchStm (T.LABEL l) =
 	emit (A.LABEL {asm=Temp.labelname l ^ ":\n", lab = l})
@@ -103,7 +122,7 @@ fun codegen (frame: F.frame) (stm: T.stm) = let
 	result (fn r => emit (A.OPER {asm="\tmovq\t" ^ itoa i ^ "(`s0)" ^ ", `d0\n",
 				      src=[munchExp e], dst=[r], jmp=NONE}))
       | munchExp (T.MEM e) =
-	result (fn r => emit (A.MOVE {asm="\tmovq\t`s0, `d0\n", src=munchExp e, dst=r}))
+	result (fn r => emit (A.OPER {asm="\tmovq\t(`s0), `d0\n", src=[munchExp e], dst=[r], jmp=NONE}))
       | munchExp (T.BINOP(T.DIV, e1, e2)) =
 	result (fn r => (emit (A.OPER {asm="\tmovq\t$0, `d0\n",
 				       src=[], dst=[F.RDX], jmp=NONE});
