@@ -20,6 +20,8 @@ structure G = Graph
 structure F = Flow
 structure GT = G.Table
 structure TT = Temp.Table
+structure GS = G.Set
+structure TS = Temp.Set
 structure S = IntListSet
 
 fun ICE msg = ErrorMsg.impossible ("LIVENESS: " ^ msg)
@@ -38,6 +40,15 @@ fun interferenceGraph (Flow.FGRAPH{control, def, use, ismove}: Flow.flowgraph,
 	val outs = Array.array (length nlist, S.empty)
 	val repeat = ref true
 
+	fun dprint(n, s) = (
+	    print(G.nodename n
+		  ^ (if valOf(GT.look(ismove, n)) then "M" else "")
+		  ^ "("
+		  ^ String.concatWith " " (map Temp.tempname (valOf(GT.look(def, n))))
+		  ^ "): ");
+	    print(String.concatWith " " (map Int.toString (S.listItems(s))));
+	    print "\n")
+ 
 	val _ = (* algorithm 10.4 *)
 	    while (!repeat) do (
 		repeat := false;
@@ -66,8 +77,8 @@ fun interferenceGraph (Flow.FGRAPH{control, def, use, ismove}: Flow.flowgraph,
 	     nmap: Temp.temp GT.table,
 	     weights: int ref GT.table) =
 	    foldl (fn (n, (igraph, tmap, nmap, weights)) =>
-		      let val defs = valOf(GT.look(def, n))
-			  val uses = valOf(GT.look(use, n))
+		      let val defs = TS.fromList(valOf(GT.look(def, n)))
+			  val uses = TS.fromList(valOf(GT.look(use, n)))
 			  fun add(t, (gh, tm, nm, wm)) =
 			      case TT.look(tm, t) of
 				  NONE => let val n' = G.newNode gh
@@ -77,20 +88,39 @@ fun interferenceGraph (Flow.FGRAPH{control, def, use, ismove}: Flow.flowgraph,
 					      GT.enter(wm, n', ref 0))
 					  end
 				| SOME _ => (gh, tm, nm, wm)
-		      in foldl add (igraph, tmap, nmap, weights) (defs @ uses) end)
+		      in TS.foldl add (igraph, tmap, nmap, weights) (TS.union(defs, uses)) end)
 		  (G.newGraph(), TT.empty, GT.empty, GT.empty)
 		  (G.nodes control)
 
-	val _ = Vector.appi
-		    (fn (i, n) => let val ts = Array.sub(outs, i)
-				  in app (fn d => S.app (fn t => (if d <> t
-								  then let val dn = valOf(TT.look(tmap, d))
-									   val tn = valOf(TT.look(tmap, t))
-								       in G.mk_edge{from=dn, to=tn} end
-								  else ())) ts)
-					 (valOf(GT.look(def, n)))
-				  end)
-		    nvec
+       val _ = Vector.appi
+		   (fn (i, n) => let val ts = Array.sub(outs, i)
+				 in app (fn d => S.app (fn t => (if d <> t
+								 then let val dn = valOf(TT.look(tmap, d))
+									  val tn = valOf(TT.look(tmap, t))
+								      in G.mk_edge{from=dn, to=tn} end
+								 else ())) ts)
+					(valOf(GT.look(def, n)))
+				 end)
+		   nvec
+	(*val _ =
+	    Vector.appi
+		(fn (i, n) => let val ts = Array.sub(outs, i)
+				  (*val _ = dprint(n, ts)*)
+			      in app (fn d => S.app (fn t =>
+							(if d <> t then
+							     let val dn = valOf(TT.look(tmap, d))
+								 val tn = valOf(TT.look(tmap, t))
+							     in if (not(valOf(GT.look(ismove, n))))
+								   orelse
+								   (hd(valOf(GT.look(use, n))) <> t)
+								then
+								    G.mk_edge{from=dn, to=tn}
+								else ()
+							     end
+							 else ())) ts)
+				     (valOf(GT.look(def, n)))
+			      end)
+		nvec*)
 
 	fun tnode t = valOf(TT.look(tmap, t))
 	fun gtemp n = valOf(GT.look(nmap, n))
@@ -131,7 +161,7 @@ fun show(out, (IGRAPH {graph, tnode, gtemp, moves}), spillCosts) =
 	fun show_node n = (
 	    pr (nm n);
 	    pr ("(" ^ Int.toString(spillCosts(n)) ^ "):\t");
-	    prl (String.concatWith " " (map nm (Graph.adj n))))
+	    prl (String.concatWith " " (map nm (GS.listItems(GS.fromList((Graph.adj n)))))))
     in
 	app show_node (Graph.nodes graph)
     end

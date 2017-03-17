@@ -7,6 +7,11 @@ fun newtemp() = let val t = !temps in temps := t+1; t end
 		    
 structure Table = IntMapTable(type key = int
 			      fun getInt n = n)
+
+structure Set = BinarySetFn (struct
+			      type ord_key = temp
+			      val compare = Int.compare
+			      end)
 			     
 fun makestring t = "t" ^ Int.toString t
 				      

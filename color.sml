@@ -58,6 +58,22 @@ struct
 				 " "
 				 (map (fn n => Temp.tempname(igtemp n)) l))
 			    ^ "\n")
+	  fun showAlloc(tbl) =
+	      TextIO.output(TextIO.stdOut,
+			    "\nAlloc: " ^
+			    (String.concatWith
+				 ", "
+				 (map (fn (t, r) => t ^ ": " ^ (Frame.regName r))
+				      (List.mapPartial
+					   (fn n =>
+					       (case GT.look(tbl, n) of
+						    SOME r => SOME (n2t n, r)
+						  | NONE => NONE))
+					   allnodes)))
+			    ^ "\n")
+
+	  (*val _ = showAlloc(color)*)
+			   
 	  (*val _ = showNodeSet("allnotes", allnodes_set)
 	  val _ = showNodeSet("precolored", precolored)
 	  val _ = showNodeSet("nonprecolored", nonprecolored)*)
@@ -209,6 +225,7 @@ struct
 		(*showNodeList("selectStack", selectStack);
 		showNodeSet("spilledNodes", spilledNodes);
 		showNodeSet("coloredNodes", coloredNodes);*)
+		(*TextIO.output(TextIO.stdOut, n2t n); showAlloc(color);*)
 		(case S.listItems(foldl (fn (w, cs) =>
 					    let val v = getAlias w
 					    in if GS.member(coloredNodes, v) orelse GS.member(precolored, v)
@@ -261,7 +278,7 @@ struct
 end
 
 
-(* test
+(* test *)
 local
     exception ASSERT of string
     fun assert msg cond = ignore (cond orelse raise ASSERT msg)
@@ -302,7 +319,7 @@ local
 
     val (igraph as Liveness.IGRAPH {graph, tnode, gtemp, moves}, live_outs, spillCosts) =
 	Liveness.interferenceGraph(fgraph, nlist)
-    (*val _ = Liveness.show(TextIO.stdOut, igraph, spillCosts)*)
+    val _ = Liveness.show(TextIO.stdOut, igraph, spillCosts)
 
     val (alloc, spills) = Color.color {
 	    interference = igraph,
@@ -327,4 +344,4 @@ local
 
 in
 end
- *)
+

@@ -65,6 +65,8 @@ val _ = run("./testcases/array.tig", 3)
 val _ = run("./testcases/forloop.tig", 101)
 val _ = run("./testcases/record.tig", 255)
 val _ = run("./testcases/queens.tig", 92)
+val _ = run("./testcases/fib.tig", 109)
+val _ = run("./testcases/pi.tig", 0)
 
 in
 

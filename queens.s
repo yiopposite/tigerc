@@ -9,20 +9,16 @@ L52:
 	movq	$8, -8(%rbp)
 	movq	$0, -16(%rbp)
 	movq	$-24, %rax
-	movq	%rax, %rax
 	addq	%rbp, %rax
-	movq	%rax, %rax
 	movq	%rax, -56(%rbp)
 	movq	-8(%rbp), %rax
 	movq	%rax, -64(%rbp)
 	movq	$0, %rax
 	movq	%rax, -72(%rbp)
 	movq	-64(%rbp), %rax
-	movq	%rax, %rax
 	imul	$8, %rax
 	movq	%rax, %rdi
 	call	malloc
-	movq	%rax, %rax
 	movq	%rax, %rsi
 	movq	$0, %rdx
 L0:
@@ -36,28 +32,22 @@ L1:
 	addq	%rax, %rcx
 	movq	-72(%rbp), %rax
 	movq	%rax, (%rcx)
-	movq	%rdx, %rax
-	addq	$1, %rax
-	movq	%rax, %rdx
+	addq	$1, %rdx
 	jmp	L0
 L2:
 	movq	-56(%rbp), %rax
 	movq	%rsi, (%rax)
 	movq	$-32, %rax
-	movq	%rax, %rax
 	addq	%rbp, %rax
-	movq	%rax, %rax
 	movq	%rax, -80(%rbp)
 	movq	-8(%rbp), %rax
 	movq	%rax, -88(%rbp)
 	movq	$0, %rax
 	movq	%rax, -96(%rbp)
 	movq	-88(%rbp), %rax
-	movq	%rax, %rax
 	imul	$8, %rax
 	movq	%rax, %rdi
 	call	malloc
-	movq	%rax, %rax
 	movq	%rax, %rsi
 	movq	$0, %rdx
 L3:
@@ -71,17 +61,13 @@ L4:
 	addq	%rax, %rcx
 	movq	-96(%rbp), %rax
 	movq	%rax, (%rcx)
-	movq	%rdx, %rax
-	addq	$1, %rax
-	movq	%rax, %rdx
+	addq	$1, %rdx
 	jmp	L3
 L5:
 	movq	-80(%rbp), %rax
 	movq	%rsi, (%rax)
 	movq	$-40, %rax
-	movq	%rax, %rax
 	addq	%rbp, %rax
-	movq	%rax, %rax
 	movq	%rax, -104(%rbp)
 	movq	-8(%rbp), %rax
 	movq	%rax, %rcx
@@ -89,16 +75,13 @@ L5:
 	addq	%rax, %rcx
 	movq	%rcx, %rax
 	subq	$1, %rax
-	movq	%rax, %rax
 	movq	%rax, -112(%rbp)
 	movq	$0, %rax
 	movq	%rax, -120(%rbp)
 	movq	-112(%rbp), %rax
-	movq	%rax, %rax
 	imul	$8, %rax
 	movq	%rax, %rdi
 	call	malloc
-	movq	%rax, %rax
 	movq	%rax, %rsi
 	movq	$0, %rdx
 L6:
@@ -112,17 +95,13 @@ L7:
 	addq	%rax, %rcx
 	movq	-120(%rbp), %rax
 	movq	%rax, (%rcx)
-	movq	%rdx, %rax
-	addq	$1, %rax
-	movq	%rax, %rdx
+	addq	$1, %rdx
 	jmp	L6
 L8:
 	movq	-104(%rbp), %rax
 	movq	%rsi, (%rax)
 	movq	$-48, %rax
-	movq	%rax, %rax
 	addq	%rbp, %rax
-	movq	%rax, %rax
 	movq	%rax, -128(%rbp)
 	movq	-8(%rbp), %rax
 	movq	%rax, %rcx
@@ -130,16 +109,13 @@ L8:
 	addq	%rax, %rcx
 	movq	%rcx, %rax
 	subq	$1, %rax
-	movq	%rax, %rax
 	movq	%rax, -136(%rbp)
 	movq	$0, %rax
 	movq	%rax, -144(%rbp)
 	movq	-136(%rbp), %rax
-	movq	%rax, %rax
 	imul	$8, %rax
 	movq	%rax, %rdi
 	call	malloc
-	movq	%rax, %rax
 	movq	%rax, %rsi
 	movq	$0, %rdx
 L9:
@@ -153,9 +129,7 @@ L10:
 	addq	%rax, %rcx
 	movq	-144(%rbp), %rax
 	movq	%rax, (%rcx)
-	movq	%rdx, %rax
-	addq	$1, %rax
-	movq	%rax, %rdx
+	addq	$1, %rdx
 	jmp	L9
 L11:
 	movq	-128(%rbp), %rax
@@ -164,7 +138,6 @@ L11:
 	movq	%rbp, %rdi
 	movq	%rax, %rsi
 	call	L13
-	movq	%rax, %rax
 	movq	-16(%rbp), %rax
 	jmp	L51
 L51:
@@ -207,7 +180,6 @@ L45:
 	movq	-24(%rax), %rax
 	movq	%rax, %rcx
 	movq	-24(%rbp), %rax
-	movq	%rax, %rax
 	imul	$8, %rax
 	addq	%rax, %rcx
 	movq	(%rcx), %rax
@@ -233,7 +205,6 @@ L42:
 	movq	-24(%rax), %rax
 	movq	%rax, %rcx
 	movq	-24(%rbp), %rax
-	movq	%rax, %rax
 	imul	$8, %rax
 	addq	%rax, %rcx
 	movq	$1, %rax
@@ -254,7 +225,6 @@ L42:
 	movq	-48(%rax), %rax
 	movq	%rax, %rdx
 	movq	-24(%rbp), %rax
-	movq	%rax, %rax
 	addq	$7, %rax
 	movq	%rax, %rcx
 	movq	-16(%rbp), %rax
@@ -268,24 +238,20 @@ L42:
 	movq	-32(%rax), %rax
 	movq	%rax, %rcx
 	movq	-16(%rbp), %rax
-	movq	%rax, %rax
 	imul	$8, %rax
 	addq	%rax, %rcx
 	movq	-24(%rbp), %rax
 	movq	%rax, (%rcx)
 	movq	-8(%rbp), %rcx
 	movq	-16(%rbp), %rax
-	movq	%rax, %rax
 	addq	$1, %rax
 	movq	%rcx, %rdi
 	movq	%rax, %rsi
 	call	L13
-	movq	%rax, %rax
 	movq	-8(%rbp), %rax
 	movq	-24(%rax), %rax
 	movq	%rax, %rcx
 	movq	-24(%rbp), %rax
-	movq	%rax, %rax
 	imul	$8, %rax
 	addq	%rax, %rcx
 	movq	$0, %rax
@@ -306,7 +272,6 @@ L42:
 	movq	-48(%rax), %rax
 	movq	%rax, %rdx
 	movq	-24(%rbp), %rax
-	movq	%rax, %rax
 	addq	$7, %rax
 	movq	%rax, %rcx
 	movq	-16(%rbp), %rax
@@ -318,25 +283,17 @@ L42:
 	movq	%rax, (%rdx)
 L43:
 	movq	-24(%rbp), %rax
-	movq	%rax, %rax
 	addq	$1, %rax
-	movq	%rax, %rax
 	movq	%rax, -24(%rbp)
 	jmp	L44
 L46:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rdi
-	call	L12
-	movq	%rax, %rax
 	movq	-8(%rbp), %rcx
 	movq	-8(%rbp), %rax
 	movq	-16(%rax), %rax
-	movq	%rax, %rax
 	addq	$1, %rax
 	movq	%rax, -16(%rcx)
 	movq	$0, %rax
 L48:
-	movq	%rax, %rax
 	jmp	L53
 L30:
 	movq	$1, %rsi
@@ -364,7 +321,6 @@ L37:
 	movq	-48(%rcx), %rcx
 	movq	%rcx, %rsi
 	movq	-24(%rbp), %rcx
-	movq	%rcx, %rcx
 	addq	$7, %rcx
 	movq	%rcx, %rdx
 	movq	-16(%rbp), %rcx
@@ -378,7 +334,6 @@ L37:
 L41:
 	movq	$0, %rax
 L40:
-	movq	%rax, %rax
 	jmp	L39
 L29:
 	movq	$0, %rax
@@ -420,7 +375,6 @@ L24:
 	movq	-32(%rax), %rax
 	movq	%rax, %rcx
 	movq	-16(%rbp), %rax
-	movq	%rax, %rax
 	imul	$8, %rax
 	addq	%rax, %rcx
 	movq	(%rcx), %rcx
@@ -434,38 +388,28 @@ L21:
 	jne	L18
 L19:
 	movq	$L17, %rax
-	movq	%rax, %rax
 L20:
 	movq	%rax, %rdi
 	call	print
-	movq	%rax, %rax
 	movq	-24(%rbp), %rax
-	movq	%rax, %rax
 	addq	$1, %rax
-	movq	%rax, %rax
 	movq	%rax, -24(%rbp)
 	jmp	L23
 L18:
 	movq	$L16, %rax
-	movq	%rax, %rax
 	jmp	L20
 L15:
 	movq	$L25, %rax
 	movq	%rax, %rdi
 	call	print
-	movq	%rax, %rax
 	movq	-16(%rbp), %rax
-	movq	%rax, %rax
 	addq	$1, %rax
-	movq	%rax, %rax
 	movq	%rax, -16(%rbp)
 	jmp	L26
 L14:
 	movq	$L28, %rax
 	movq	%rax, %rdi
 	call	print
-	movq	%rax, %rax
-	movq	%rax, %rax
 	jmp	L55
 L55:
 	addq	$24, %rsp

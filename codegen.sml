@@ -69,9 +69,25 @@ fun codegen (frame: F.frame) (stm: T.stm) = let
 		      src=[munchExp e2], dst=[munchExp e1], jmp=NONE})
 
       (* MOVE *)
+      | munchStm (T.MOVE(T.CONST i, T.CONST j)) =
+	ICE "munchStm MOVE CONST to CONST"
+
       | munchStm (T.MOVE(e1, T.CONST i)) =
 	emit (A.OPER {asm="\tmovq\t$" ^ itoa i ^ ", `d0\n",
 		      src=[], dst=[munchExp(e1)], jmp=NONE})
+
+      | munchStm (T.MOVE(T.TEMP d, T.BINOP(T.PLUS, T.TEMP s, T.CONST i))) = (
+	if d <> s then
+	    emit (A.MOVE {asm="\tmovq\t`s0, `d0\n", src=s, dst=d})
+	else ();
+	emit (A.OPER {asm="\taddq\t$" ^ itoa i ^ ", `d0\n",
+			  src=[d], dst=[d], jmp=NONE}))
+      (*| munchStm (T.MOVE(T.TEMP d, T.BINOP(T.PLUS, T.CONST i, T.TEMP s))) = (
+	if d <> s then
+	    emit (A.MOVE {asm="\tmovq\t`s0, `d0\n", src=s, dst=d})
+	else ();
+	emit (A.OPER {asm="\taddq\t$" ^ itoa i ^ ", `d0\n",
+			  src=[d], dst=[d], jmp=NONE}))*)
 
       | munchStm (T.MOVE(e1, e2)) =
 	emit (A.MOVE {asm="\tmovq\t`s0, `d0\n",
@@ -147,7 +163,7 @@ fun codegen (frame: F.frame) (stm: T.stm) = let
 					      src=[t], dst=[F.SP], jmp=NONE}))
 			    (List.take(rev args, k))
 		    else ()
-	    val regs = ListPair.map
+	    val _ = ListPair.map
 			   (fn (t, r) => (
 			       emit (A.MOVE {asm="\tmovq\t`s0, `d0\n",
 					     src=t, dst=r});
@@ -155,7 +171,7 @@ fun codegen (frame: F.frame) (stm: T.stm) = let
 			   (if k > 0 then List.drop(args, k) else args,
 			    F.argregs)
 	in result (fn r => (emit (A.OPER {asm="\tcall\t" ^ Temp.labelname l ^ "\n",
-					  src=regs,
+					  src=[],
 					  dst=F.callersaves,
 					  jmp=NONE});
 			    if k > 0 then

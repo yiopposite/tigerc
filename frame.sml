@@ -192,15 +192,7 @@ fun procEntryExit3 (Frame {name, formals, locals, tos, fname}, body) =
 	 ^ "\tleave\n"
          ^ "\tret\n"}
     end
-(*
-fun procEntryExit(frame, body) =
-    [A.OPER {asm="\tpushq\t`s0\n", src=[FP], dst=[SP], jmp=NONE},
-     A.MOVE {asm="\tmovq\t`s0, `d0\n", src=SP, dst=FP}
-    ]
-    @ body
-    @ [A.OPER {asm="\tleave\n", src=[FP], dst=[SP, FP], jmp=NONE},
-       A.OPER {asm="\tret\n", src=[], dst=[], jmp=NONE}]
-*)
+
 end
 
 structure Frame : FRAME = X86Frame
