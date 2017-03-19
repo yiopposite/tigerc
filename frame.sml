@@ -170,10 +170,20 @@ fun procEntryExit1(Frame {formals as (sl::rest),locals,...}, body) =
 
 structure A = Assem
 
-fun procEntryExit2(frame, body) =
+(*fun procEntryExit2(frame, body) =
     body @ [A.OPER {asm="", dst=[],
 		    src=[FP,SP,RBX,R12,R13,R14,R15](*calleesaves*),
-		    jmp=SOME []}]
+		    jmp=SOME []}]*)
+fun procEntryExit2(frame, body) =
+    let val tbx = Temp.newtemp()
+    in
+	[A.MOVE {asm="\tmovq\t`s0, `d0\n", src=RBX, dst=tbx}]
+	@ body
+	@ [A.MOVE {asm="\tmovq\t`s0, `d0\n", src=tbx, dst=RBX},
+	   A.OPER {asm="", dst=[],
+		   src=[RV, FP,SP,RBX,R12,R13,R14,R15](*calleesaves*),
+		   jmp=SOME []}]
+    end
 
 fun procEntryExit3 (Frame {name, formals, locals, tos, fname}, body) =
     let val sp = !tos

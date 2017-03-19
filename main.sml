@@ -53,7 +53,9 @@ fun run(path, expected) =
     in
 	compile(path, f');
 	assert("linking " ^ path, P.isSuccess(P.system("gcc runtime.c " ^ f')));
-	assert("running " ^ path, (P.system "./a.out") = expected);
+	if expected >= 0 then
+	    assert("running " ^ path, (P.system "./a.out") = expected)
+	else ();
 	print("OK: " ^ path ^ "\n")
     end
 
@@ -67,6 +69,7 @@ val _ = run("./testcases/record.tig", 255)
 val _ = run("./testcases/queens.tig", 92)
 val _ = run("./testcases/fib.tig", 109)
 val _ = run("./testcases/pi.tig", 0)
+val _ = run("./testcases/merge.tig", ~1)
 
 in
 

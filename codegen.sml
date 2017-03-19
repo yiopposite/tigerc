@@ -139,12 +139,19 @@ fun codegen (frame: F.frame) (stm: T.stm) = let
 				      src=[munchExp e], dst=[r], jmp=NONE}))
       | munchExp (T.MEM e) =
 	result (fn r => emit (A.OPER {asm="\tmovq\t(`s0), `d0\n", src=[munchExp e], dst=[r], jmp=NONE}))
+      (*| munchExp (T.BINOP(T.DIV, e1, T.CONST i)) =
+	result (fn r => (emit (A.OPER {asm="\txor\t`d0, `d0\n",
+				       src=[], dst=[F.RDX], jmp=NONE});
+			 emit (A.MOVE {asm="\tmovq\t`s0, `d0\n", src=munchExp e1, dst=F.RAX});
+			 emit (A.OPER {asm="\tidiv\t$" ^ itoa i ^ "\n",
+				       src=[F.RDX, F.RAX], dst=[F.RAX, F.RDX], jmp=NONE});
+			 emit (A.MOVE {asm="\tmovq\t`s0, `d0\n", src=F.RAX, dst=r})))*)
       | munchExp (T.BINOP(T.DIV, e1, e2)) =
-	result (fn r => (emit (A.OPER {asm="\tmovq\t$0, `d0\n",
+	result (fn r => (emit (A.OPER {asm="\txor\t`d0, `d0\n",
 				       src=[], dst=[F.RDX], jmp=NONE});
 			 emit (A.MOVE {asm="\tmovq\t`s0, `d0\n", src=munchExp e1, dst=F.RAX});
 			 emit (A.OPER {asm="\tidiv\t`s0\n",
-				       src=[munchExp e2, F.RAX], dst=[F.RAX, F.RDX], jmp=NONE});
+				       src=[munchExp e2, F.RDX, F.RAX], dst=[F.RAX, F.RDX], jmp=NONE});
 			 emit (A.MOVE {asm="\tmovq\t`s0, `d0\n", src=F.RAX, dst=r})))
       | munchExp (T.BINOP(opc, e1, T.CONST i)) =
 	result (fn r => (emit (A.MOVE {asm="\tmovq\t`s0, `d0\n", src=munchExp e1, dst=r});

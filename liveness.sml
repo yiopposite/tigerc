@@ -94,6 +94,7 @@ fun interferenceGraph (Flow.FGRAPH{control, def, use, ismove}: Flow.flowgraph,
 
        val _ = Vector.appi
 		   (fn (i, n) => let val ts = Array.sub(outs, i)
+				     (*val _ = dprint(n, ts)*)
 				 in app (fn d => S.app (fn t => (if d <> t
 								 then let val dn = valOf(TT.look(tmap, d))
 									  val tn = valOf(TT.look(tmap, t))
