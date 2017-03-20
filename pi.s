@@ -273,14 +273,12 @@ L9:
 	movq	%rsi, %rdi
 	movq	%rax, %rsi
 	call	L7
-	movq	%rbx, %rsi
 	xor	%rdx, %rdx
 	movq	%rbx, %rax
 	movq	$10, %rcx
 	idiv	%rcx
 	imul	$10, %rax
-	subq	%rax, %rsi
-	movq	%rsi, %rbx
+	subq	%rax, %rbx
 	movq	$L8, %rax
 	movq	%rax, %rdi
 	call	ord

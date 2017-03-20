@@ -92,7 +92,7 @@ fun interferenceGraph (Flow.FGRAPH{control, def, use, ismove}: Flow.flowgraph,
 		  (G.newGraph(), TT.empty, GT.empty, GT.empty)
 		  (G.nodes control)
 
-       val _ = Vector.appi
+       (*val _ = Vector.appi
 		   (fn (i, n) => let val ts = Array.sub(outs, i)
 				     (*val _ = dprint(n, ts)*)
 				 in app (fn d => S.app (fn t => (if d <> t
@@ -102,8 +102,8 @@ fun interferenceGraph (Flow.FGRAPH{control, def, use, ismove}: Flow.flowgraph,
 								 else ())) ts)
 					(valOf(GT.look(def, n)))
 				 end)
-		   nvec
-	(*val _ =
+		   nvec*)
+	val _ =
 	    Vector.appi
 		(fn (i, n) => let val ts = Array.sub(outs, i)
 				  (*val _ = dprint(n, ts)*)
@@ -111,17 +111,16 @@ fun interferenceGraph (Flow.FGRAPH{control, def, use, ismove}: Flow.flowgraph,
 							(if d <> t then
 							     let val dn = valOf(TT.look(tmap, d))
 								 val tn = valOf(TT.look(tmap, t))
-							     in if (not(valOf(GT.look(ismove, n))))
-								   orelse
-								   (hd(valOf(GT.look(use, n))) <> t)
-								then
-								    G.mk_edge{from=dn, to=tn}
-								else ()
+							     in if valOf(GT.look(ismove, n))
+								   andalso
+								   hd(valOf(GT.look(use, n))) = t
+								then ()
+								else G.mk_edge{from=dn, to=tn}
 							     end
 							 else ())) ts)
 				     (valOf(GT.look(def, n)))
 			      end)
-		nvec*)
+		nvec
 
 	fun tnode t = valOf(TT.look(tmap, t))
 	fun gtemp n = valOf(GT.look(nmap, n))
