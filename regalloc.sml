@@ -86,7 +86,9 @@ struct
 	      in case Color.color {interference = igraph,
 				   initial = Frame.tempMap,
 				   spillCosts = spillCosts,
-				   registers = Frame.registerList} of
+				   registers = Frame.registerList,
+				   flowgraph = fgraph,
+				   instrlist = nlist} of
 		     (allocation, nil) => (instrs, frame, allocation)
 		   | (_, spills) => alloc'(rewriteProgram(instrs, frame, spills))
 	      end

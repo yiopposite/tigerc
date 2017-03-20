@@ -42,7 +42,7 @@ fun interferenceGraph (Flow.FGRAPH{control, def, use, ismove}: Flow.flowgraph,
 
 	fun dprint(n, s) = (
 	    print(G.nodename n
-		  ^ (if valOf(GT.look(ismove, n)) then "M" else "")
+		  ^ (if isSome(GT.look(ismove, n)) then "M" else "")
 		  ^ "("
 		  ^ String.concatWith " " (map Temp.tempname (valOf(GT.look(def, n))))
 		  ^ "): ");
@@ -111,7 +111,7 @@ fun interferenceGraph (Flow.FGRAPH{control, def, use, ismove}: Flow.flowgraph,
 							(if d <> t then
 							     let val dn = valOf(TT.look(tmap, d))
 								 val tn = valOf(TT.look(tmap, t))
-							     in if valOf(GT.look(ismove, n))
+							     in if isSome(GT.look(ismove, n))
 								   andalso
 								   hd(valOf(GT.look(use, n))) = t
 								then ()
@@ -132,7 +132,7 @@ fun interferenceGraph (Flow.FGRAPH{control, def, use, ismove}: Flow.flowgraph,
 	    map (fn n => let val [d] = valOf(GT.look(def, n))
 			     val [u] = valOf(GT.look(use, n))
 			 in (tnode d, tnode u) end)
-		(List.filter (fn n => valOf(GT.look(ismove, n))) nlist)
+		(List.filter (fn n => isSome(GT.look(ismove, n))) nlist)
 
 	val _ = app (fn n =>
 		      let val defs = valOf(GT.look(def, n))

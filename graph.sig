@@ -2,7 +2,7 @@ signature GRAPH =
 sig
     type graph
     type node
-    
+
     val nodes: graph -> node list
     val succ: node -> node list
     val pred: node -> node list
@@ -20,6 +20,9 @@ sig
 
     structure Set : ORD_SET
     sharing type Set.Key.ord_key = node
+
+    datatype nodepair = NodePair of node * node
+    structure AdjSet : ORD_SET sharing type AdjSet.Key.ord_key = nodepair
 
     val nodename: node->string  (* for debugging only *)
 

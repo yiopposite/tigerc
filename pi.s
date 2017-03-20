@@ -304,76 +304,76 @@ L4:	/* test2 [m~8] [] */
 	pushq	%rbp
 	movq	%rsp, %rbp
 	subq	$8, %rsp
-	movq	%rbx, %rcx
+	movq	%rbx, %rsi
 L57:
 	movq	%rdi, -8(%rbp)
-	movq	-8(%rbp), %rdx
+	movq	-8(%rbp), %rcx
 	movq	-8(%rbp), %rax
 	movq	-32(%rax), %rax
-	movq	-8(%rbp), %rbx
-	movq	-40(%rbx), %rbx
-	movq	%rbx, %rsi
-	movq	-8(%rbp), %rbx
-	movq	-16(%rbx), %rbx
-	imul	$8, %rbx
-	addq	%rbx, %rsi
-	movq	(%rsi), %rbx
-	movq	%rbx, %rsi
-	movq	-8(%rbp), %rbx
-	movq	-8(%rbx), %rbx
-	imul	%rbx, %rsi
-	addq	%rsi, %rax
-	movq	%rax, -32(%rdx)
 	movq	-8(%rbp), %rdx
+	movq	-40(%rdx), %rdx
+	movq	%rdx, %rbx
+	movq	-8(%rbp), %rdx
+	movq	-16(%rdx), %rdx
+	imul	$8, %rdx
+	addq	%rdx, %rbx
+	movq	(%rbx), %rdx
+	movq	%rdx, %rbx
+	movq	-8(%rbp), %rdx
+	movq	-8(%rdx), %rdx
+	imul	%rdx, %rbx
+	addq	%rbx, %rax
+	movq	%rax, -32(%rcx)
+	movq	-8(%rbp), %rcx
 	movq	-8(%rbp), %rax
 	movq	-48(%rax), %rax
 	subq	$1, %rax
-	movq	%rax, -48(%rdx)
+	movq	%rax, -48(%rcx)
 	movq	-8(%rbp), %rax
 	movq	-40(%rax), %rax
-	movq	%rax, %rdi
+	movq	%rax, %rcx
 	movq	-8(%rbp), %rax
 	movq	-16(%rax), %rax
 	imul	$8, %rax
-	addq	%rax, %rdi
+	addq	%rax, %rcx
 	movq	-8(%rbp), %rax
 	movq	-32(%rax), %rax
-	movq	%rax, %rsi
+	movq	%rax, %rbx
 	xor	%rdx, %rdx
 	movq	-8(%rbp), %rax
 	movq	-32(%rax), %rax
-	movq	-8(%rbp), %rbx
-	movq	-48(%rbx), %rbx
-	idiv	%rbx
+	movq	-8(%rbp), %rdi
+	movq	-48(%rdi), %rdi
+	idiv	%rdi
 	movq	%rax, %rdx
 	movq	-8(%rbp), %rax
 	movq	-48(%rax), %rax
 	imul	%rax, %rdx
-	subq	%rdx, %rsi
-	movq	%rsi, (%rdi)
-	movq	-8(%rbp), %rsi
+	subq	%rdx, %rbx
+	movq	%rbx, (%rcx)
+	movq	-8(%rbp), %rbx
 	xor	%rdx, %rdx
 	movq	-8(%rbp), %rax
 	movq	-32(%rax), %rax
-	movq	-8(%rbp), %rbx
-	movq	-48(%rbx), %rbx
-	idiv	%rbx
-	movq	%rax, -32(%rsi)
-	movq	-8(%rbp), %rdx
+	movq	-8(%rbp), %rcx
+	movq	-48(%rcx), %rcx
+	idiv	%rcx
+	movq	%rax, -32(%rbx)
+	movq	-8(%rbp), %rcx
 	movq	-8(%rbp), %rax
 	movq	-48(%rax), %rax
 	subq	$1, %rax
-	movq	%rax, -48(%rdx)
-	movq	-8(%rbp), %rdx
+	movq	%rax, -48(%rcx)
+	movq	-8(%rbp), %rcx
 	movq	-8(%rbp), %rax
 	movq	-16(%rax), %rax
 	subq	$1, %rax
-	movq	%rax, -16(%rdx)
+	movq	%rax, -16(%rcx)
 	movq	-8(%rbp), %rax
 	movq	-16(%rax), %rax
 	jmp	L56
 L56:
-	movq	%rcx, %rbx
+	movq	%rsi, %rbx
 	addq	$8, %rsp
 	leave
 	ret

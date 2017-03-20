@@ -15,21 +15,22 @@ L76:
 	movq	%rax, (%rbx)
 	movq	%rbp, %rdi
 	call	L28
-	movq	%rax, %rbx
+	movq	%rax, -24(%rbp)
 	movq	$-8, %rax
 	addq	%rbp, %rax
-	movq	%rax, -24(%rbp)
+	movq	%rax, %rbx
 	call	_Tiger_getchar
-	movq	%rax, %rcx
-	movq	-24(%rbp), %rax
-	movq	%rcx, (%rax)
+	movq	%rax, (%rbx)
 	movq	%rbp, %rdi
 	call	L28
+	movq	%rax, %rcx
+	movq	%rbp, %rbx
 	movq	%rbp, %rdi
-	movq	%rbx, %rsi
-	movq	%rax, %rdx
+	movq	-24(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rcx, %rdx
 	call	L29
-	movq	%rbp, %rdi
+	movq	%rbx, %rdi
 	movq	%rax, %rsi
 	call	L31
 	jmp	L75

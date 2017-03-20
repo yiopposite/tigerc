@@ -4,7 +4,7 @@
 _Tiger_main:	/*  [] [] */
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$24, %rsp
+	subq	$16, %rsp
 	movq	%rbx, %rax
 	movq	%rax, -16(%rbp)
 L57:
@@ -16,24 +16,20 @@ L57:
 	movq	%rax, %rbx
 	call	_Tiger_getchar
 	movq	%rax, (%rbx)
-	movq	$0, %rax
-	movq	%rax, -24(%rbp)
+	movq	$0, %rbx
 	movq	%rbp, %rdi
 	call	L1
-	movq	%rax, -24(%rbp)
+	movq	%rax, %rbx
 	movq	%rbp, %rdi
-	movq	-24(%rbp), %rax
-	movq	%rax, %rsi
+	movq	%rbx, %rsi
 	call	L2
 	movq	$L54, %rax
 	movq	%rax, %rdi
 	call	print
-	movq	%rbp, %rbx
 	movq	%rbp, %rdi
-	movq	-24(%rbp), %rax
-	movq	%rax, %rsi
+	movq	%rbx, %rsi
 	call	L3
-	movq	%rbx, %rdi
+	movq	%rbp, %rdi
 	movq	%rax, %rsi
 	call	L2
 	movq	$L55, %rax
@@ -43,7 +39,7 @@ L57:
 L56:
 	movq	-16(%rbp), %rcx
 	movq	%rcx, %rbx
-	addq	$24, %rsp
+	addq	$16, %rsp
 	leave
 	ret
 L55:	.long 1

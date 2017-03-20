@@ -3,7 +3,7 @@ structure Flow : sig
     datatype flowgraph = FGRAPH of {control: Graph.graph,
 				    def: Temp.temp list Graph.Table.table,
 				    use: Temp.temp list Graph.Table.table,
-				    ismove: bool Graph.Table.table}
+				    ismove: (Temp.temp * Temp.temp) Graph.Table.table}
 
   (* Note:  any "use" within the block is assumed to be BEFORE a "def" 
         of the same variable.  If there is a def(x) followed by use(x)
@@ -32,7 +32,7 @@ structure Graph = Graph
 datatype flowgraph = FGRAPH of {control: Graph.graph,
 				def: Temp.temp list Graph.Table.table,
 				use: Temp.temp list Graph.Table.table,
-				ismove: bool Graph.Table.table}
+				ismove: (Temp.temp * Temp.temp) Graph.Table.table}
 
 structure A = Assem
 structure G = Graph
@@ -46,7 +46,7 @@ fun instr2graph instrs =
 		  (gph: G.graph,
 		   def: Temp.temp list T.table,
  		   use: Temp.temp list T.table,
-		   ismove: bool G.Table.table,
+		   ismove: (Temp.temp * Temp.temp) G.Table.table,
 		   labs: (G.node option * G.node list) Symbol.table,
 		   last_jmp: bool,
 		   n::ns: G.node list, imap: A.instr T.table)) =
@@ -67,7 +67,7 @@ fun instr2graph instrs =
 	    in (gph,
 		T.enter(def, n', dst),
 		T.enter(use, n', src),
-		T.enter(ismove, n', false),
+		ismove,
 		labs', is_jmp, n'::n::ns, T.enter(imap, n', i))
 	    end
 	  | proc (i as A.OPER {asm, dst, src, jmp},
@@ -80,7 +80,7 @@ fun instr2graph instrs =
 	    in (gph,
 		T.enter(def, n, dst),
 		T.enter(use, n, src),
-		T.enter(ismove, n, false),
+		ismove,
 		labs, is_jmp, [n], T.enter(imap, n, i))
 	    end
 
@@ -97,7 +97,7 @@ fun instr2graph instrs =
 		(gph,
 		 T.enter(def, n', []), (* empty list *)
 		 T.enter(use, n', []), (* empty list *)
-		 T.enter(ismove, n', false),
+		 ismove,
 		 labs', false, n'::n::ns, T.enter(imap, n', i))
 	    end
 	  | proc (i as A.LABEL {asm, lab}, (gph, def, use, ismove, labs, false, [], imap)) =
@@ -107,7 +107,7 @@ fun instr2graph instrs =
 		(gph,
 		 T.enter(def, n, []), (* empty list *)
 		 T.enter(use, n, []), (* empty list *)
-		 T.enter(ismove, n, false),
+		 ismove,
 		 labs', false, [n], T.enter(imap, n, i))
 	    end
 
@@ -118,7 +118,7 @@ fun instr2graph instrs =
 		(gph,
 		 T.enter(def, n', [dst]),
 		 T.enter(use, n', [src]),
-		 T.enter(ismove, n', true),
+		 T.enter(ismove, n', (src, dst)),
 		 labs, false, n'::n::ns, T.enter(imap, n', i))
 	    end
 	  | proc (i as A.MOVE {asm, dst, src}, (gph, def, use, ismove, labs, false, [], imap)) =
@@ -127,7 +127,7 @@ fun instr2graph instrs =
 		(gph,
 		 T.enter(def, n, [dst]),
 		 T.enter(use, n, [src]),
-		 T.enter(ismove, n, true),
+		 T.enter(ismove, n, (src, dst)),
 		 labs, false, [n], T.enter(imap, n, i))
 	    end
 
@@ -150,7 +150,7 @@ fun show(out, (FGRAPH {control, def, use, ismove})) =
 		(*val preds = "[" ^ p G.pred n ^ "]"*)
 		val defs = "<" ^ String.concatWith " " (map Temp.tempname (valOf(T.look(def, n)))) ^ ">"
 		val uses = "<" ^ String.concatWith " " (map Temp.tempname (valOf(T.look(use, n)))) ^ ">"
-		val move = if valOf(T.look(ismove, n)) then "M" else "m"
+		val move = if isSome(T.look(ismove, n)) then "M" else "m"
 	    in
 		TextIO.output(out,
 			      String.concatWith "\t"

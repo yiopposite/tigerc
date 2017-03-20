@@ -81,5 +81,14 @@ struct
                                     Int.compare (n1, n2)
 				end)
 
+  datatype nodepair = NodePair of node * node
+  structure AdjSet = BinarySetFn (struct
+				   type ord_key = nodepair
+				   fun compare (NodePair((_, n1), (_, n2)), NodePair((_, m1), (_, m2))) =
+				       if n1 = m1
+				       then Int.compare (n2, m2)
+				       else Int.compare (n1, m1)
+				   end)
+
 end
 
