@@ -119,6 +119,24 @@ struct
 	freezeWorklist = #freezeWorklist wl,
 	spillWorklist = #spillWorklist wl,
 	spilledNodes = #spilledNodes wl,
+	coalescedNodes = x,
+	coloredNodes = #coloredNodes wl,
+	selectStack = #selectStack wl,
+	coalescedMoves = #coalescedMoves wl,
+	constrainedMoves = #constrainedMoves wl,
+	frozenMoves = #frozenMoves wl,
+	worklistMoves = #worklistMoves wl,
+	activeMoves = #activeMoves wl,
+	adjSet = #adjSet wl,
+	adjList = #adjList wl,
+	degree = #degree wl,
+	moveList = #moveList wl,
+	alias = #alias wl}
+  fun withCoN(wl: WL, x): WL =
+       {simplifyWorklist = #simplifyWorklist wl,
+	freezeWorklist = #freezeWorklist wl,
+	spillWorklist = #spillWorklist wl,
+	spilledNodes = #spilledNodes wl,
 	coalescedNodes = #coalescedNodes wl,
 	coloredNodes = x,
 	selectStack = #selectStack wl,
@@ -204,7 +222,61 @@ struct
 	degree = #degree wl,
 	moveList = #moveList wl,
 	alias = #alias wl}
-  fun withXX(wl: WL, x): WL =
+  fun withOM(wl: WL, x): WL =
+       {simplifyWorklist = #simplifyWorklist wl,
+	freezeWorklist = #freezeWorklist wl,
+	spillWorklist = #spillWorklist wl,
+	spilledNodes = #spilledNodes wl,
+	coalescedNodes = #coalescedNodes wl,
+	coloredNodes = #coloredNodes wl,
+	selectStack = #selectStack wl,
+	coalescedMoves = #coalescedMoves wl,
+	constrainedMoves = x,
+	frozenMoves = #frozenMoves wl,
+	worklistMoves = #worklistMoves wl,
+	activeMoves = #activeMoves wl,
+	adjSet = #adjSet wl,
+	adjList = #adjList wl,
+	degree = #degree wl,
+	moveList = #moveList wl,
+	alias = #alias wl}
+  fun withCM(wl: WL, x): WL =
+       {simplifyWorklist = #simplifyWorklist wl,
+	freezeWorklist = #freezeWorklist wl,
+	spillWorklist = #spillWorklist wl,
+	spilledNodes = #spilledNodes wl,
+	coalescedNodes = #coalescedNodes wl,
+	coloredNodes = #coloredNodes wl,
+	selectStack = #selectStack wl,
+	coalescedMoves = x,
+	constrainedMoves = #constrainedMoves wl,
+	frozenMoves = #frozenMoves wl,
+	worklistMoves = #worklistMoves wl,
+	activeMoves = #activeMoves wl,
+	adjSet = #adjSet wl,
+	adjList = #adjList wl,
+	degree = #degree wl,
+	moveList = #moveList wl,
+	alias = #alias wl}
+  fun withML(wl: WL, x): WL =
+       {simplifyWorklist = #simplifyWorklist wl,
+	freezeWorklist = #freezeWorklist wl,
+	spillWorklist = #spillWorklist wl,
+	spilledNodes = #spilledNodes wl,
+	coalescedNodes = #coalescedNodes wl,
+	coloredNodes = #coloredNodes wl,
+	selectStack = #selectStack wl,
+	coalescedMoves = #coalescedMoves wl,
+	constrainedMoves = #constrainedMoves wl,
+	frozenMoves = #frozenMoves wl,
+	worklistMoves = #worklistMoves wl,
+	activeMoves = #activeMoves wl,
+	adjSet = #adjSet wl,
+	adjList = #adjList wl,
+	degree = #degree wl,
+	moveList = x,
+	alias = #alias wl}
+  fun withAlias(wl: WL, x): WL =
        {simplifyWorklist = #simplifyWorklist wl,
 	freezeWorklist = #freezeWorklist wl,
 	spillWorklist = #spillWorklist wl,
@@ -221,9 +293,65 @@ struct
 	adjList = #adjList wl,
 	degree = #degree wl,
 	moveList = #moveList wl,
+	alias = x}
+  fun withAdjSet(wl: WL, x): WL =
+       {simplifyWorklist = #simplifyWorklist wl,
+	freezeWorklist = #freezeWorklist wl,
+	spillWorklist = #spillWorklist wl,
+	spilledNodes = #spilledNodes wl,
+	coalescedNodes = #coalescedNodes wl,
+	coloredNodes = #coloredNodes wl,
+	selectStack = #selectStack wl,
+	coalescedMoves = #coalescedMoves wl,
+	constrainedMoves = #constrainedMoves wl,
+	frozenMoves = #frozenMoves wl,
+	worklistMoves = #worklistMoves wl,
+	activeMoves = #activeMoves wl,
+	adjSet = x,
+	adjList = #adjList wl,
+	degree = #degree wl,
+	moveList = #moveList wl,
+	alias = #alias wl}
+  fun withAdjList(wl: WL, x): WL =
+       {simplifyWorklist = #simplifyWorklist wl,
+	freezeWorklist = #freezeWorklist wl,
+	spillWorklist = #spillWorklist wl,
+	spilledNodes = #spilledNodes wl,
+	coalescedNodes = #coalescedNodes wl,
+	coloredNodes = #coloredNodes wl,
+	selectStack = #selectStack wl,
+	coalescedMoves = #coalescedMoves wl,
+	constrainedMoves = #constrainedMoves wl,
+	frozenMoves = #frozenMoves wl,
+	worklistMoves = #worklistMoves wl,
+	activeMoves = #activeMoves wl,
+	adjSet = #adjSet wl,
+	adjList = x,
+	degree = #degree wl,
+	moveList = #moveList wl,
+	alias = #alias wl}
+  fun withFM(wl: WL, x): WL =
+       {simplifyWorklist = #simplifyWorklist wl,
+	freezeWorklist = #freezeWorklist wl,
+	spillWorklist = #spillWorklist wl,
+	spilledNodes = #spilledNodes wl,
+	coalescedNodes = #coalescedNodes wl,
+	coloredNodes = #coloredNodes wl,
+	selectStack = #selectStack wl,
+	coalescedMoves = #coalescedMoves wl,
+	constrainedMoves = #constrainedMoves wl,
+	frozenMoves = x,
+	worklistMoves = #worklistMoves wl,
+	activeMoves = #activeMoves wl,
+	adjSet = #adjSet wl,
+	adjList = #adjList wl,
+	degree = #degree wl,
+	moveList = #moveList wl,
 	alias = #alias wl}
 
-  infix withSWL withFWL withPWL withPN withCN withSS withDegree withAM withWLM
+  infix withSWL withFWL withPWL withPN withCoN withCN withSS withDegree
+	withAM withWLM withCM withOM withML withAlias withAdjSet withAdjList
+	withFM
 
   fun invarirants({simplifyWorklist,
                    freezeWorklist,
@@ -245,8 +373,7 @@ struct
 		  precolored, allnodes_set) =
       (assert("INVARIRANT0", GS.isEmpty(GS.intersection(precolored, spilledNodes)));
        assert("INVARIRANT1", GS.isEmpty(GS.intersection(precolored, coloredNodes)));
-       assert("INVARIRANT2", GS.isEmpty(GS.intersection(spilledNodes, coloredNodes)))
-      )
+       assert("INVARIRANT2", GS.isEmpty(GS.intersection(spilledNodes, coloredNodes))))
 
 val allnodes_r = ref (nil: G.node list)
 val precolored_r = ref (GS.empty: GS.set)
@@ -280,26 +407,72 @@ fun pr_worklistMoves(wl as {worklistMoves=wlm,...}: WL) =
 				     (GS.listItems wlm))))
 
 fun pr_moveList(wl as {moveList=ml,...}: WL) = (
-    prl "\nmoveList:";
+    prl "moveList:";
     app (fn n =>
 	    case GT.look(ml, n) of
 		SOME s =>
-		TextIO.output(TextIO.stdOut,
-			      n2t n ^ ": " ^
-			      (String.concatWith
-				   " "
-				   (map (fn n => Graph.nodename(n))
-					(GS.listItems s)))
-			      ^ "\n")
+		prl (n2t n ^ ": " ^
+		     (String.concatWith
+			  " "
+			  (map (fn n => Graph.nodename(n))
+			       (GS.listItems s))))
 	      | NONE => ())
 	(!allnodes_r))
 
-fun pr_worklists(wl as {simplifyWorklist,freezeWorklist, spillWorklist,...}: WL) =
+fun pr_degree(degree: int GT.table) =
+    let val ds = foldr (fn (n, acc) =>
+			   case GT.look(degree, n) of
+			       SOME d => (n, d)::acc
+			     | NONE => acc)
+		       nil (!allnodes_r)
+    in
+	prl ("degree: " ^
+	     (String.concatWith
+		  ", "
+		  (map (fn (n, d) => n2t n ^ " " ^ Int.toString d) ds)))
+    end
+
+fun pr_alias(alias: G.node GT.table) =
+    let val ns = foldr (fn (n, acc) =>
+			   case GT.look(alias, n) of
+			       SOME m => (n, m)::acc
+			     | NONE => acc)
+		       nil (!allnodes_r)
+    in
+	prl ("alias: " ^
+	     (String.concatWith
+		  ", "
+		  (map (fn (n, m) => n2t n ^ " " ^ n2t m) ns)))
+    end
+
+fun pr_worklists(wl as {simplifyWorklist,freezeWorklist,
+			spillWorklist, selectStack, ...}: WL) =
     (pr_set "simplifyWorklist" simplifyWorklist;
      pr_worklistMoves wl;
      pr_set "freezeWorklist" freezeWorklist;
-     pr_set "spillWorklist" spillWorklist)
-  
+     pr_set "spillWorklist" spillWorklist;
+     pr_list "selectStack" selectStack)
+
+fun pr_nodes(wl as {spilledNodes,coalescedNodes, coloredNodes,...}: WL) =
+    (pr_set "spilledNodes" spilledNodes;
+     pr_set "coalescedNodes" coalescedNodes;
+     pr_set "coloredNodes" coloredNodes)
+
+fun pr_wl(wl: WL) =
+    (pr_worklists wl; pr_nodes wl; pr_alias (#alias wl))
+
+fun pr_color(tbl) =
+    prl("\nColor: " ^
+	(String.concatWith
+	     ", "
+	     (map (fn (t, r) => t ^ ": " ^ (Frame.regName r))
+		  (List.mapPartial
+		       (fn n =>
+			   (case GT.look(tbl, n) of
+				SOME r => SOME (n2t n, r)
+			      | NONE => NONE))
+		       (!allnodes_r)))))
+
 fun getAlias(n, wl as {coalescedNodes, alias,...}:WL) =
     if GS.member(coalescedNodes, n)
     then getAlias(valOf(GT.look(alias, n)), wl)
@@ -331,26 +504,178 @@ fun enableMoves(nodes, wl as {activeMoves, worklistMoves, moveList,...}:WL) =
 	wl withAM(!activeMoves_r) withWLM (!worklistMoves_r))
     end
 
-fun decrementDegree(m,
-		    wl as {degree, selectStack, coalescedNodes, moveList,
-			   spillWorklist, freezeWorklist, simplifyWorklist,
-			   activeMoves, worklistMoves, ...}: WL) =
-    let val d = valOf(GT.look(degree, m))
-	val degree = GT.enter(degree, m, d - 1)
-	val wl = wl withDegree degree
-    in if d = (!K_r) then let
-	   val wl = enableMoves(GS.add(adjacent(m, wl), m), wl)
-	   val spillWorklist = GS.subtract(spillWorklist, m)
-	   val x = moveRelated(m, wl)
-	   val freezeWorklist = if x then GS.add(freezeWorklist, m) else freezeWorklist
-	   val simplifyWorklist = if x then GS.add(simplifyWorklist, m) else simplifyWorklist
-       in
-	   wl withSWL spillWorklist
-	      withFWL freezeWorklist
-	      withSWL simplifyWorklist
-       end
-       else
-	   wl
+fun addWorkList(u, wl) =
+    if (nonprecolored u)
+       andalso (not (moveRelated(u, wl)))
+       andalso (valOf(GT.look(#degree wl, u)) < (!K_r))
+    then
+	wl withSWL (GS.add(#simplifyWorklist wl, u))
+	   withFWL (GS.delete(#freezeWorklist wl, u))
+    else
+	wl
+
+fun decrementDegree(m, wl) =
+    if precolored m then wl
+    else
+	let val degree = #degree wl
+	    val d = valOf(GT.look(degree, m))
+	    val degree = GT.enter(degree, m, d - 1)
+	    val wl = wl withDegree degree
+	    (*val _ = prl("decrementDegree "  ^ n2t m ^ " " ^ Int.toString d)*)
+	in if d <> (!K_r) then wl
+	   else let
+	       val {spillWorklist, freezeWorklist, simplifyWorklist,...}: WL = wl
+	       val wl = enableMoves(GS.add(adjacent(m, wl), m), wl)
+	       val spillWorklist = GS.subtract(spillWorklist, m)
+	       val x = moveRelated(m, wl)
+	       val freezeWorklist = if x then GS.add(freezeWorklist, m) else freezeWorklist
+	       val simplifyWorklist = if x then GS.add(simplifyWorklist, m) else simplifyWorklist
+	   in
+	       wl withSWL spillWorklist
+		  withFWL freezeWorklist
+		  withSWL simplifyWorklist
+	   end
+	end
+
+fun addEdge(u, v, wl as {adjSet, adjList, degree,...}: WL) =
+    if not (G.AdjSet.member(adjSet, G.NodePair(u, v)))
+       andalso not (G.eq(u, v)) then
+    let
+	(*val _ = prl("addEdge1 "  ^ n2t u ^ " " ^ n2t v)*)
+	val adjSet = G.AdjSet.add(G.AdjSet.add(adjSet, G.NodePair(u, v)),
+				  G.NodePair(v, u))
+	val wl = wl withAdjSet adjSet
+	val wl = if nonprecolored u then
+		     let val s = valOf(GT.look(adjList, u))
+			 val adjList = GT.enter(adjList, u, GS.add(s, v))
+			 val d = valOf(GT.look(degree, u)) + 1
+			 val degree = GT.enter(degree, u, d)
+		     in wl withAdjList adjList withDegree degree
+		     end
+		 else wl
+	val wl = if nonprecolored v then
+		     let val s = valOf(GT.look(adjList, v))
+			 val adjList = GT.enter(adjList, v, GS.add(s, u))
+			 val d = valOf(GT.look(degree, v)) + 1
+			 val degree = GT.enter(degree, v, d)
+		     in wl withAdjList adjList withDegree degree
+		     end
+		 else wl
+    in
+	wl
+    end
+    else wl (*before prl("addEdge2 "  ^ n2t u ^ " " ^ n2t v)*)
+
+fun combine(u, v, wl as {freezeWorklist, spillWorklist,coalescedNodes,
+			 alias, moveList,...}, K) =
+    let
+	(*val _ = prl("COMBINE " ^ n2t u ^ " " ^ n2t v)*)
+	val wl = if GS.member(freezeWorklist, v)
+		 then wl withFWL (GS.delete(freezeWorklist, v))
+		 else wl withSWL (GS.delete(spillWorklist, v))
+	val wl = wl withCN (GS.add(coalescedNodes, v))
+	val wl = wl withAlias (GT.enter(alias, v, u))
+	val wl = wl withML (GT.enter(moveList, u,
+				     GS.union(valOf(GT.look(moveList, u)),
+					      valOf(GT.look(moveList, v)))))
+	val wl = enableMoves(GS.singleton v, wl)
+	(*val _ = pr_set "COMBINE XXX" (adjacent(v, wl))*)
+	val wl = GS.foldl (fn (t, wl) =>
+			      decrementDegree(t, addEdge(t, u, wl)))
+			  wl
+			  (adjacent(v, wl))
+	val degree = #degree wl
+	val freezeWorklist = #freezeWorklist wl
+    in
+	if GS.member(freezeWorklist, u) andalso (valOf(GT.look(degree, u)) >= K) then
+	    wl withFWL (GS.delete(freezeWorklist, u))
+	       withSWL (GS.add(#spillWorklist wl, u))
+	else wl
+	(*before prl "COMBINE DONE"*)
+    end
+
+fun coalesce(wl: WL, m_nodes, K) =
+    let	val m::worklistMoves = GS.listItems (#worklistMoves wl)
+	val (t1, t2) = m_nodes m
+	val (x, y) = (getAlias(t1, wl), getAlias(t2, wl))
+	val (u, v) = if precolored y then (y, x) else (x, y)
+	(*val _ = prl("COALESCING " ^ G.nodename m ^ ": "
+		    ^ n2t t1 ^ " " ^ n2t t2 ^ ", "
+		    ^ n2t x ^ " " ^ n2t y ^ ", "
+		    ^ n2t u ^ " " ^ n2t v)*)
+	val wl = wl withWLM (GS.fromList worklistMoves)
+
+	fun OK(t, r, degree, adjSet) =
+	    (precolored t
+	     orelse valOf(GT.look(degree, t)) < K
+	     orelse G.AdjSet.member(adjSet, G.NodePair(t, r)))
+
+	fun conservative(nodes, degree) = (
+	    (*pr_set "CONSERVATIVE" nodes;*)
+	    (GS.foldl (fn (n,k) =>
+			  if (precolored n) orelse (valOf(GT.look(degree, n)) >= K)
+			  then k+1 else k)
+		      0 nodes) < K
+	)
+    in
+	if G.eq(u, v) then
+	    let val wl = wl withCM (GS.add(#coalescedMoves wl, m))
+	    in
+		(*prl("COALESCING1 " ^ n2t u ^ " " ^ n2t v);*)
+		addWorkList(u, wl)
+	    end
+	else if precolored v
+		orelse G.AdjSet.member(#adjSet wl, G.NodePair(u, v)) then
+	    let val wl = wl withOM (GS.add(#constrainedMoves wl, m))
+	    in
+		(*prl("COALESCING2 " ^ n2t u ^ " " ^ n2t v);*)
+		addWorkList(v, addWorkList(u, wl))
+	    end
+	else if (precolored u
+		 andalso (List.all
+			      (fn t => OK(t, u, #degree wl, #adjSet wl))
+			      (GS.listItems(adjacent(v, wl)))))
+		orelse ((nonprecolored u)
+			andalso
+			(conservative(GS.union(adjacent(u, wl),
+					       adjacent(v, wl)),
+				      #degree wl)))
+	then
+	    let val wl = wl withCM (GS.add(#coalescedMoves wl, m))
+	    in
+		(*prl("COALESCING3 " ^ n2t u ^ " " ^ n2t v);*)
+		addWorkList(u, combine(u, v, wl, K))
+	    end
+	else (
+	    (*prl("COALESCING4 " ^ n2t u ^ " " ^ n2t v);*)
+	    wl withAM (GS.add(#activeMoves wl, m)))
+    end
+
+fun freezeMoves(u, wl, m_nodes, K) =
+    GS.foldl
+	(fn (m, wl) =>
+	    let val (x, y) = m_nodes m
+		val y' =  getAlias(y, wl)
+		val v = if G.eq(y', getAlias(u, wl)) then getAlias(x, wl) else y'
+		val wl = wl withAM (GS.delete(#activeMoves wl, m))
+			    withFM (GS.add(#frozenMoves wl, m))
+	    in
+		if GS.isEmpty(nodeMoves(v, wl))
+		   andalso (valOf(GT.look(#degree wl, v)) < K) then
+		    wl withFWL (GS.delete(#freezeWorklist wl, v))
+		       withSWL (GS.add(#spillWorklist wl, v))
+		else wl
+	    end
+	)
+	wl
+	(nodeMoves(u, wl))
+
+fun freeze(wl: WL, m_nodes, K) =
+    let val u::freezeWorklist = GS.listItems (#freezeWorklist wl)
+	val wl = wl withFWL (GS.fromList freezeWorklist)
+		    withSWL (GS.add(#simplifyWorklist wl, u))
+    in
+	freezeMoves(u, wl, m_nodes, K)
     end
 
 fun simpify(wl: WL) =
@@ -358,18 +683,11 @@ fun simpify(wl: WL) =
 	val simplifyWorklist = GS.delete(#simplifyWorklist wl, n)
 	val selectStack = n::(#selectStack wl)
 	val wl = wl withSWL simplifyWorklist withSS selectStack
-	val adjs = GS.filter nonprecolored (adjacent(n, wl))
     in
-	GS.foldl decrementDegree wl adjs
+	GS.foldl decrementDegree wl (adjacent(n, wl))
     end
 
-fun coalesce(wl: WL) =
-    wl
-
-fun freeze(wl: WL) =
-    wl
-
-fun loop(wl: WL, spillCosts) =
+fun loop(wl: WL, spillCosts, f_moves, tnode, K) =
     let
 	fun selectSpill(degree, spillWorklist) =
 	    let
@@ -384,14 +702,18 @@ fun loop(wl: WL, spillCosts) =
 		select(GS.listItems spillWorklist)
 	    end
 
+	fun m_nodes m = case GT.look(f_moves, m) of
+			    SOME (from, to) => (tnode from, tnode to)
+			  | NONE => ICE "m_nodes"
+
 	fun loop'(wl: WL) = (
 	    (*pr_worklists wl;*)
 	    if not(GS.isEmpty (#simplifyWorklist wl)) then
 		loop'(simpify wl)
 	    else if not(GS.isEmpty (#worklistMoves wl)) then
-		loop'(coalesce wl)
+		loop'(coalesce(wl, m_nodes, K))
 	    else if not(GS.isEmpty (#freezeWorklist wl)) then
-		loop'(freeze wl)
+		loop'(freeze(wl, m_nodes, K))
 	    else
 		let val spillWorklist = #spillWorklist wl
 		in if not(GS.isEmpty spillWorklist) then
@@ -416,13 +738,27 @@ fun assignColors(wl: WL,
     case (#selectStack wl) of
 	nil =>
 	(wl,
-	 GS.foldl (fn (n, result) =>
+	 (*GS.foldl (fn (n, result) =>
 		      GT.enter(result, n,
-			       valOf(GT.look(result, getAlias(n, wl)))))
+			       case GT.look(result, getAlias(n, wl)) of
+				   SOME c => c
+				 | NONE => (pr_wl wl; pr_color result;
+					    ICE ("no color for " ^ n2t n))))
+			       (*valOf(GT.look(result, getAlias(n, wl)))))*)
+		  result
+		  (#coalescedNodes wl))*)
+	 GS.foldl (fn (n, result) =>
+		      let val m = getAlias(n, wl)
+		      in case GT.look(result, m) of
+			     SOME c => GT.enter(result, n, c)
+			   | NONE => (assert("ASSIGN", GS.member(#spilledNodes wl, m));
+				      result)
+		      end)
 		  result
 		  (#coalescedNodes wl))
       | (n::selectStack) =>
 	let
+	    (*val _ = prl "ASSIGNCOLORS"*)
 	    val adjs = valOf(GT.look(#adjList wl, n))
 	    val coloredNodes = #coloredNodes wl
 	    val spilledNodes = #spilledNodes wl
@@ -444,7 +780,7 @@ fun assignColors(wl: WL,
 			  precolored, allcolors)
 	       | (c::_) => assignColors(
 			      wl withSS selectStack
-				 withCN (GS.add(coloredNodes, n)),
+				 withCoN (GS.add(coloredNodes, n)),
 			      GT.enter(result, n, c),
 			      precolored, allcolors)
 	end
@@ -521,8 +857,8 @@ fun color {interference: Liveness.igraph,
 		  (GT.empty, GS.empty)
 		  instrlist
 
-	(* no coalescing *)
-	val (moveList0, worklistMoves0) = (GT.empty, GS.empty)
+	(* no coalescing
+	val (moveList0, worklistMoves0) = (GT.empty, GS.empty) *)
 
 	val (spillWorklist0,
 	     freezeWorklist0,
@@ -559,7 +895,7 @@ fun color {interference: Liveness.igraph,
 	    alias = GT.empty
 	}
 
-	val wl = loop(wl0, spillCosts)
+	val wl = loop(wl0, spillCosts, f_moves, tnode, K)
 	val (wl, color) = assignColors(wl, color0, precolored_fn, allcolors)
     in
 	(foldl (fn (n, t) => case GT.look(color, n) of
@@ -572,7 +908,7 @@ fun color {interference: Liveness.igraph,
 
 end
 
-(* test *)
+(* test
 local
     exception ASSERT of string
     fun assert msg cond = ignore (cond orelse raise ASSERT msg)
@@ -582,14 +918,14 @@ local
     val absyn = Parse.parse_str prog
     val (Frame.PROC{body, frame})::_ = (FindEscape.findEscape absyn; Semant.transProg absyn)
     val stms = Canon.traceSchedule(Canon.basicBlocks(Canon.linearize body))
-    val _ = app (fn s => Printtree.printtree(TextIO.stdOut,s)) stms
+    (*val _ = app (fn s => Printtree.printtree(TextIO.stdOut,s)) stms*)
 
     val format = Assem.format Frame.tempName
     fun printinstr out instr = TextIO.output(out, format instr)
 
     val instrs = List.concat(map (CodeGen.codegen frame) stms)
     val instrs = Frame.procEntryExit2(frame, instrs)
-    val _ = app (printinstr TextIO.stdOut) instrs
+    (*val _ = app (printinstr TextIO.stdOut) instrs*)
 
     val (fgraph as Flow.FGRAPH{control,def,use,ismove}, nlist, imap) = Flow.instr2graph instrs
 
@@ -638,4 +974,4 @@ local
 			   ^ "\n"))
 
 in
-end
+end *)

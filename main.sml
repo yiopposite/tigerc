@@ -51,12 +51,13 @@ fun run(path, expected) =
 	val f = #base(OS.Path.splitBaseExt (#file(OS.Path.splitDirFile path)))
 	val f' = OS.Path.joinBaseExt {base=f, ext=SOME "s"}
     in
+	print("Compiling " ^ path ^ "\n");
 	compile(path, f');
 	assert("linking " ^ path, P.isSuccess(P.system("gcc runtime.c " ^ f')));
-	if expected >= 0 then
-	    assert("running " ^ path, (P.system "./a.out") = expected)
-	else ();
-	print("OK: " ^ path ^ "\n")
+	if expected >= 0 then (
+	    print("Running " ^ path ^ "\n");
+	    assert("running " ^ path, (P.system "./a.out") = expected))
+	else ()
     end
 
 val _ = run("./testcases/trivial.tig", 5)
@@ -66,9 +67,9 @@ val _ = run("./testcases/callargs1.tig", 1)
 val _ = run("./testcases/array.tig", 3)
 val _ = run("./testcases/forloop.tig", 101)
 val _ = run("./testcases/record.tig", 255)
-val _ = run("./testcases/queens.tig", 92)
 val _ = run("./testcases/fib.tig", 109)
 val _ = run("./testcases/pi.tig", 0)
+val _ = run("./testcases/queens.tig", 92)
 val _ = run("./testcases/merge.tig", ~1)
 
 in
