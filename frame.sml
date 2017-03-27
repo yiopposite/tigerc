@@ -176,10 +176,13 @@ structure A = Assem
 		    jmp=SOME []}]*)
 fun procEntryExit2(frame, body) =
     let val tbx = Temp.newtemp()
+	val t12 = Temp.newtemp()
     in
-	[A.MOVE {asm="\tmovq\t`s0, `d0\n", src=RBX, dst=tbx}]
+	[A.MOVE {asm="\tmovq\t`s0, `d0\n", src=RBX, dst=tbx},
+	 A.MOVE {asm="\tmovq\t`s0, `d0\n", src=R12, dst=t12}]
 	@ body
-	@ [A.MOVE {asm="\tmovq\t`s0, `d0\n", src=tbx, dst=RBX},
+	@ [A.MOVE {asm="\tmovq\t`s0, `d0\n", src=t12, dst=R12},
+	   A.MOVE {asm="\tmovq\t`s0, `d0\n", src=tbx, dst=RBX},
 	   A.OPER {asm="", dst=[],
 		   src=[RV, FP,SP,RBX,R12,R13,R14,R15](*calleesaves*),
 		   jmp=SOME []}]

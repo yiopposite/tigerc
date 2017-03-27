@@ -212,8 +212,20 @@ fun transExp(ve, te, lv: Tr.level, A.NilExp): expty = (Tr.mkNil(), T.NIL)
 					    "record expression with missing field "
 					    ^ S.name(#1(List.nth(members, i))))
 			    | SOME e => e))
+
+	(* record descriptor for GC *)
+	val desc = implode(map (fn (_, t) =>
+				   (case actualTy t of
+					T.RECORD _ => #"p"
+				      | T.ARRAY _ => #"p"
+				      | T.NIL => #"n"
+				      | T.INT => #"i"
+				      | T.STRING => #"s"
+				      | T.NAME _ => ICE "tystr: bad case NAME"
+				      | T.UNIT => ICE "tystr: bad case UNIT"))
+			       members)
     in
-	(Tr.mkRecordExp es, ty)
+	(Tr.mkRecordExp(es, desc), ty)
     end
 
   | transExp(ve, te, lv, A.ArrayExp {typ, size, init, pos}) =

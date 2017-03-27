@@ -19,7 +19,7 @@ sig
     val mkFieldVar: exp * int -> exp
     val mkSubscriptVar: exp * exp -> exp
 
-    val mkRecordExp: exp list -> exp
+    val mkRecordExp: exp list * string -> exp
     val mkArrayExp: exp * exp -> exp
 
     val mkCallExp: Temp.label * level * level * exp list -> exp
@@ -82,10 +82,12 @@ val lp_stack: Temp.label list list ref = ref []
 
 val frags: Frame.frag list ref = ref []
 
-fun reset () = (lp_stack := []; frags := []; Frame.reset ())
-
 fun getResult () = !frags
 
+structure D = BinaryMapFn(type ord_key=string val compare=String.compare)
+val desctbl : Temp.label D.map ref = ref D.empty
+
+fun reset () = (lp_stack := []; frags := []; desctbl := D.empty; Frame.reset ())
 
 (* Frame *)
 
@@ -222,9 +224,13 @@ fun mkCallExp(label,
   | mkCallExp(label, TopLevel, _, _) =
     ICE "mkCallExp: TopLevel caller"
 
-fun mkRecordExp elist =
+fun mkRecordExp (elist, desc) =
     let val n = length elist
 	val b = Temp.newtemp()
+	val l = case D.find(!desctbl, desc) of
+		    SOME l => l
+		  | NONE => let val l = Temp.newlabel();
+			    in desctbl := D.insert(!desctbl, desc, l); l end
 	val s0 = T.MOVE(T.TEMP b,
 			T.CALL (T.NAME (Temp.namedlabel "malloc"),
 				[T.CONST (n * Frame.wordSize)]))

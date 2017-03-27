@@ -1,0 +1,36 @@
+Introduction
+============
+
+This is an implmentation of the Tiger compiler, up to chapter 12 of the book "Modern Compiler Implementation in ML" by Andrew W. Appel. It generates x64 assembly codes that compiles with GCC and produces native Linux executables together with a small runtime library written in C.
+
+How to run
+==========
+
+1. Compiling the sources to generate the "tigerc.x86-linux" image in the current directory.
+2. Run the driver script "tigerc" on a tiger program to generate the final "a.out" executable, like:
+   $ ./tigerc testcases/queens.tig
+   $ ./a.out
+
+You may need to modify the driver script to provide the correct path to your local SML/NJ installation.
+
+Notes
+=====
+
+1. There is no optimization in the backend other than coalescing in the register allocation phase.
+2. The code generation module (codegen.sml) is rudimentary at best.
+3. The implementation of the coloring algorithm (color.sml) feels a bit clumsy and could be improved in terms of efficiency and clarity with better data structures.
+4. The implementation of parameter passing in function calls (frame.sml) could be improved.
+5. This is a project for educational purpose and is not fully tested.
+
+Development environment
+=======================
+
+$ uname -a
+Linux envy 4.0.4-301.fc22.x86_64 #1 SMP Thu May 21 13:10:33 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
+
+$ sml
+Standard ML of New Jersey v110.78 [built: Sat Jul  2 11:35:34 2016]
+
+$ gcc --version
+gcc (GCC) 5.3.1 20151207 (Red Hat 5.3.1-2)
+

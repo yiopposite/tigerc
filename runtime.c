@@ -10,15 +10,15 @@ int *initArray(int size, int init)
  return a;
 }
 
-int *allocRecord(int size)
+struct string {int length; unsigned char chars[1];};
+
+int *allocRecord(struct string const *desc, int size)
 {int i;
  int *p, *a;
  p = a = (int *)malloc(size);
  for(i=0;i<size;i+=sizeof(int)) *p++ = 0;
  return a;
 }
-
-struct string {int length; unsigned char chars[1];};
 
 int stringEqual(struct string *s, struct string *t)
 {int i;

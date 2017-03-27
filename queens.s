@@ -4,14 +4,14 @@
 _Tiger_main:	/*  [] [] */
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$152, %rsp
+	subq	$128, %rsp
 	movq	%rbx, -56(%rbp)
+	movq	%r12, -64(%rbp)
 L52:
 	movq	$8, -8(%rbp)
 	movq	$0, -16(%rbp)
-	movq	$-24, %rax
-	addq	%rbp, %rax
-	movq	%rax, -64(%rbp)
+	movq	$-24, %r12
+	addq	%rbp, %r12
 	movq	-8(%rbp), %rbx
 	movq	$0, %rax
 	movq	%rax, -72(%rbp)
@@ -32,96 +32,89 @@ L1:
 	addq	$1, %rdx
 	jmp	L0
 L2:
-	movq	-64(%rbp), %rcx
-	movq	%rax, (%rcx)
-	movq	$-32, %rax
-	addq	%rbp, %rax
-	movq	%rax, -80(%rbp)
-	movq	-8(%rbp), %rbx
+	movq	%rax, (%r12)
+	movq	$-32, %rbx
+	addq	%rbp, %rbx
+	movq	-8(%rbp), %r12
 	movq	$0, %rax
-	movq	%rax, -88(%rbp)
-	movq	%rbx, %rdi
+	movq	%rax, -80(%rbp)
+	movq	%r12, %rdi
 	imul	$8, %rdi
 	call	malloc
 	movq	$0, %rdx
 L3:
-	cmp	%rbx, %rdx
+	cmp	%r12, %rdx
 	jge	L5
 L4:
 	movq	%rax, %rsi
 	movq	%rdx, %rcx
 	imul	$8, %rcx
 	addq	%rcx, %rsi
-	movq	-88(%rbp), %rcx
+	movq	-80(%rbp), %rcx
 	movq	%rcx, (%rsi)
 	addq	$1, %rdx
 	jmp	L3
 L5:
-	movq	-80(%rbp), %rcx
-	movq	%rax, (%rcx)
+	movq	%rax, (%rbx)
 	movq	$-40, %rax
-	addq	%rbp, %rax
-	movq	%rax, -96(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -128(%rbp)
-	movq	-128(%rbp), %rax
-	movq	-8(%rbp), %rcx
-	addq	%rcx, %rax
-	subq	$1, %rax
-	movq	%rax, -136(%rbp)
-	movq	$0, %rax
 	movq	%rax, -104(%rbp)
-	movq	-136(%rbp), %rdi
+	movq	-104(%rbp), %rax
+	addq	%rbp, %rax
+	movq	%rax, -112(%rbp)
+	movq	-8(%rbp), %r12
+	movq	-8(%rbp), %rax
+	addq	%rax, %r12
+	subq	$1, %r12
+	movq	$0, %rax
+	movq	%rax, -88(%rbp)
+	movq	%r12, %rdi
 	imul	$8, %rdi
 	call	malloc
 	movq	$0, %rdx
 L6:
-	movq	-136(%rbp), %rcx
-	cmp	%rcx, %rdx
+	cmp	%r12, %rdx
 	jge	L8
 L7:
 	movq	%rax, %rbx
 	movq	%rdx, %rcx
 	imul	$8, %rcx
 	addq	%rcx, %rbx
-	movq	-104(%rbp), %rcx
+	movq	-88(%rbp), %rcx
 	movq	%rcx, (%rbx)
 	addq	$1, %rdx
 	jmp	L6
 L8:
-	movq	-96(%rbp), %rcx
+	movq	-112(%rbp), %rcx
 	movq	%rax, (%rcx)
 	movq	$-48, %rax
-	addq	%rbp, %rax
-	movq	%rax, -112(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -144(%rbp)
-	movq	-144(%rbp), %rax
-	movq	-8(%rbp), %rcx
-	addq	%rcx, %rax
-	subq	$1, %rax
-	movq	%rax, -152(%rbp)
-	movq	$0, %rax
 	movq	%rax, -120(%rbp)
-	movq	-152(%rbp), %rdi
+	movq	-120(%rbp), %rax
+	addq	%rbp, %rax
+	movq	%rax, -128(%rbp)
+	movq	-8(%rbp), %r12
+	movq	-8(%rbp), %rax
+	addq	%rax, %r12
+	subq	$1, %r12
+	movq	$0, %rax
+	movq	%rax, -96(%rbp)
+	movq	%r12, %rdi
 	imul	$8, %rdi
 	call	malloc
 	movq	$0, %rdx
 L9:
-	movq	-152(%rbp), %rcx
-	cmp	%rcx, %rdx
+	cmp	%r12, %rdx
 	jge	L11
 L10:
 	movq	%rax, %rbx
 	movq	%rdx, %rcx
 	imul	$8, %rcx
 	addq	%rcx, %rbx
-	movq	-120(%rbp), %rcx
+	movq	-96(%rbp), %rcx
 	movq	%rcx, (%rbx)
 	addq	$1, %rdx
 	jmp	L9
 L11:
-	movq	-112(%rbp), %rcx
+	movq	-128(%rbp), %rcx
 	movq	%rax, (%rcx)
 	movq	$0, %rsi
 	movq	%rbp, %rdi
@@ -129,8 +122,9 @@ L11:
 	movq	-16(%rbp), %rax
 	jmp	L51
 L51:
+	movq	-64(%rbp), %r12
 	movq	-56(%rbp), %rbx
-	addq	$152, %rsp
+	addq	$128, %rsp
 	leave
 	ret
 L13:	/* try [m~8, t116] [] */
@@ -306,6 +300,7 @@ L12:	/* printboard [m~8] [] */
 	movq	%rsp, %rbp
 	subq	$24, %rsp
 	movq	%rbx, -16(%rbp)
+	movq	%r12, -24(%rbp)
 L56:
 	movq	%rdi, -8(%rbp)
 	movq	$0, %rbx
@@ -316,14 +311,12 @@ L26:
 	cmp	%rax, %rbx
 	jg	L14
 L27:
-	movq	$0, %rax
-	movq	%rax, -24(%rbp)
+	movq	$0, %r12
 L23:
 	movq	-8(%rbp), %rax
 	movq	-8(%rax), %rax
 	subq	$1, %rax
-	movq	-24(%rbp), %rcx
-	cmp	%rax, %rcx
+	cmp	%rax, %r12
 	jg	L15
 L24:
 	movq	$1, %rdx
@@ -332,9 +325,8 @@ L24:
 	movq	%rbx, %rax
 	imul	$8, %rax
 	addq	%rax, %rcx
-	movq	(%rcx), %rcx
-	movq	-24(%rbp), %rax
-	cmp	%rax, %rcx
+	movq	(%rcx), %rax
+	cmp	%r12, %rax
 	je	L21
 L22:
 	movq	$0, %rdx
@@ -345,9 +337,7 @@ L19:
 	movq	$L17, %rdi
 L20:
 	call	print
-	movq	-24(%rbp), %rax
-	addq	$1, %rax
-	movq	%rax, -24(%rbp)
+	addq	$1, %r12
 	jmp	L23
 L18:
 	movq	$L16, %rdi
@@ -362,6 +352,7 @@ L14:
 	call	print
 	jmp	L55
 L55:
+	movq	-24(%rbp), %r12
 	movq	-16(%rbp), %rbx
 	addq	$24, %rsp
 	leave

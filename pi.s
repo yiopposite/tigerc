@@ -6,6 +6,7 @@ _Tiger_main:	/*  [] [] */
 	movq	%rsp, %rbp
 	subq	$80, %rsp
 	movq	%rbx, -56(%rbp)
+	movq	%r12, -64(%rbp)
 L49:
 	movq	$10000, -8(%rbp)
 	movq	$0, -16(%rbp)
@@ -14,18 +15,16 @@ L49:
 	movq	$0, %rbx
 	movq	$-40, %rax
 	addq	%rbp, %rax
-	movq	%rax, -64(%rbp)
-	movq	$2801, %rax
 	movq	%rax, -72(%rbp)
+	movq	$2801, %r12
 	movq	$0, %rax
 	movq	%rax, -80(%rbp)
-	movq	-72(%rbp), %rdi
+	movq	%r12, %rdi
 	imul	$8, %rdi
 	call	malloc
 	movq	$0, %rdx
 L0:
-	movq	-72(%rbp), %rcx
-	cmp	%rcx, %rdx
+	cmp	%r12, %rdx
 	jge	L2
 L1:
 	movq	%rax, %rsi
@@ -37,7 +36,7 @@ L1:
 	addq	$1, %rdx
 	jmp	L0
 L2:
-	movq	-64(%rbp), %rcx
+	movq	-72(%rbp), %rcx
 	movq	%rax, (%rcx)
 	movq	$0, -48(%rbp)
 L38:
@@ -111,6 +110,7 @@ L42:
 	movq	$0, %rax
 	jmp	L48
 L48:
+	movq	-64(%rbp), %r12
 	movq	-56(%rbp), %rbx
 	addq	$80, %rsp
 	leave
