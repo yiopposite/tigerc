@@ -6,11 +6,8 @@ fun compile(filename, outfilename) =
         val frags = (FindEscape.findEscape absyn; Semant.transProg absyn)
 
 	fun comp out (Frame.PROC{body, frame}) =
-	    let (* val _ = Printtree.printtree(out,body); *)
-		val stms = Canon.linearize body
-		(* val _ = app (fn s => Printtree.printtree(out,s)) stms; *)
+	    let val stms = Canon.linearize body
 		val stms' = Canon.traceSchedule(Canon.basicBlocks stms)
-		(* val _ = app (fn s => Printtree.printtree(out,s)) stms'; *)
 		val instrs = List.concat(map (CodeGen.codegen frame) stms')
 		val instrs = Frame.procEntryExit2(frame, instrs)
 		val (instrs, frame, alloc) = Regalloc.alloc(instrs, frame)
@@ -60,16 +57,8 @@ fun run(path, expected) =
 	else ()
     end
 
-val _ = run("./testcases/trivial.tig", 5)
-val _ = run("./testcases/hello.tig", 14)
-val _ = run("./testcases/callargs.tig", 6)
-val _ = run("./testcases/callargs1.tig", 1)
-val _ = run("./testcases/array.tig", 3)
-val _ = run("./testcases/forloop.tig", 101)
-val _ = run("./testcases/record.tig", 255)
 val _ = run("./testcases/fib.tig", 109)
-val _ = run("./testcases/pi.tig", 0)
-val _ = run("./testcases/queens.tig", 92)
+val _ = run("./testcases/queens1.tig", 92)
 val _ = run("./testcases/merge.tig", ~1)
 
 in

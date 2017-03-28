@@ -1,0 +1,9 @@
+.cm/
+*.grm.desc
+*.grm.sig
+*.grm.sml
+*.lex.sml
+*.s
+tigerc.x86-linux
+a.out
+

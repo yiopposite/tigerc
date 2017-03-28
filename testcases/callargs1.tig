@@ -1,7 +1,0 @@
-let 
-
-  function add(a: int, b: int, c:int) : int = a + b + c
-
- in /*print(chr(ord("0")+6))*/ print(chr(ord("0")+add(1,2,3)))
-end
-

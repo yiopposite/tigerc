@@ -1,26 +1,33 @@
 Introduction
 ============
 
-This is an implmentation of the Tiger compiler, up to chapter 12 of the book "Modern Compiler Implementation in ML" by Andrew W. Appel. It generates x64 assembly codes that compiles with GCC and produces native Linux executables together with a small runtime library written in C.
+This is a relatively complete implmentation of the Tiger compiler, up to chapter 12 of the book "Modern Compiler Implementation in ML" by Andrew W. Appel. It generates x64 assembly codes that compiles with GCC and produces native Linux executables together with a small runtime library written in C.
 
 How to run
 ==========
 
-1. Compiling the sources to generate the "tigerc.x86-linux" image in the current directory.
+1. Compiles the sources to generate the "tigerc.x86-linux" image in the current directory.
 2. Run the driver script "tigerc" on a tiger program to generate the final "a.out" executable, like:
    $ ./tigerc testcases/queens.tig
    $ ./a.out
 
 You may need to modify the driver script to provide the correct path to your local SML/NJ installation.
 
-Notes
-=====
+Some notes on implementation
+============================
 
-1. There is no optimization in the backend other than coalescing in the register allocation phase.
-2. The code generation module (codegen.sml) is rudimentary at best.
-3. The implementation of the coloring algorithm (color.sml) feels a bit clumsy and could be improved in terms of efficiency and clarity with better data structures.
-4. The implementation of parameter passing in function calls (frame.sml) could be improved.
-5. This is a project for educational purpose and is not fully tested.
+1. This is a project for educational purpose and is not fully tested.
+2. There is no optimization in the backend other than coalescing during the register allocation phase.
+3. The implementation of code generation (codegen.sml) is rudimentary.
+4. The implementation of the coloring algorithm (color.sml) feels a bit clumsy and could be improved with better data structures.
+5. The implementation of parameter passing in function calls (frame.sml) could be improved.
+
+And finally, it is a joy writting a compiler in ML, and here are the features of ML that I deemed essential to make this a pleasant experience (in order of importance):
+ - static typing
+ - functional (non-destructive) data structures
+ - pattern match
+ - module system
+It is amazing how after completing the color.sml module, with only a few iterations, it starts emitting code that runs on the machine!
 
 Development environment
 =======================

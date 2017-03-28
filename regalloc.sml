@@ -13,8 +13,8 @@ struct
   fun rewriteProgram(instrs, frame, spills) = let
       fun find(t, ts) = List.exists (fn x => x=t) ts
       fun update(t, t', ts) = foldr (fn (x, acc) => if x=t then t'::acc else x::acc) [] ts
-      val _ = print("***SPILLING " ^
-		    String.concatWith " " (map Temp.tempname spills) ^ "\n")
+      (*val _ = print("***SPILLING " ^
+		    String.concatWith " " (map Temp.tempname spills) ^ "\n")*)
       fun rewrite1(spill, (instrs, frame)) =
 	  let val _ = F.allocLocal frame true
 	      val tos = F.frameSize frame
@@ -102,39 +102,3 @@ struct
 	   allocation)
       end
 end
-
-(* test
-local
-    exception FAILED of string
-    (*val prog = "let var i := 0 in while i < 5 do (i := i + 1); i end"*)
-    (*val prog = "print(\"Hello, world!\")"*)
-    (*val prog = "let function add(a:int,b:int,c:int): int=a+b+c in add(1,2,3) end"*)
-    (*val prog="let function add(a: int, b: int, c:int) : int = a + b + c in print(chr(ord(\"0\")+add(1,2,3))) end"*)
-    (*val prog="let type a = array of int var r:a := a[10] of 3 in r[5] end"*)
-    val prog="let var a:= 0 in for i:=0 to 100 do (a:=a+1;()) end"
-    val absyn = Parse.parse_str prog
-    val frags = (FindEscape.findEscape absyn; Semant.transProg absyn)
-
-    fun comp (Frame.PROC{body, frame}) =
-	let val stms = Canon.traceSchedule(Canon.basicBlocks(Canon.linearize body))
-	    val _ = app (fn s => Printtree.printtree(TextIO.stdOut,s)) stms
-
-	    val instrs = List.concat(map (CodeGen.codegen frame) stms)
-	    val instrs = Frame.procEntryExit2(frame, instrs)
-	    val _ = app (print o Assem.format Frame.tempName) instrs
-
-	    val (instrs, frame, alloc) = Regalloc.alloc(instrs, frame)
-	    fun t2r a t = case Temp.Table.look(a, t) of
-			      SOME r => Frame.regName r
-			    | NONE => raise FAILED "Not found TT"
-	    val format = Assem.format (t2r alloc)
-	    val printinstr = print o format
-	    val _ = app printinstr instrs
-	in ()
-	end
-      | comp _ = ()
-
-    val _ = app comp frags
-in
-end
- *)
