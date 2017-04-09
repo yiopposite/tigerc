@@ -28,7 +28,7 @@ int stringEqual(struct string *s, struct string *t)
  return 1;
 }
 
-int _Tiger_strcmp(struct string *s, struct string *t)
+long _Tiger_strcmp(struct string *s, struct string *t)
 {int i, sn = s->length, tn = t->length, n = sn < tn ? sn:tn;
   for(i=0;i<n;i++) {
     unsigned c = s->chars[i];

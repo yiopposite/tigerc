@@ -261,7 +261,6 @@ fun mkRecordExp (elist, desc) =
 
 fun mkArrayExp (size, init) =
     let val b = Temp.newtemp()
-	and r = Temp.newtemp()
 	and s = Temp.newtemp()
 	and i = Temp.newtemp()
 	and loop_lbl = Temp.newlabel ()
@@ -269,7 +268,6 @@ fun mkArrayExp (size, init) =
 	and exit_lbl = Temp.newlabel ()
     in
 	Ex (T.ESEQ(seq [T.MOVE(T.TEMP s, unEx size),
-			T.MOVE(T.TEMP r, unEx init),
 			T.MOVE(T.TEMP b,
 			       T.CALL (T.NAME (Temp.namedlabel "malloc"),
 				       [T.BINOP(T.MUL,
@@ -285,7 +283,7 @@ fun mkArrayExp (size, init) =
 					     T.BINOP(T.MUL,
 						     T.TEMP i,
 						     T.CONST Frame.wordSize))),
-			       T.TEMP r),
+			       unEx init),
 			T.MOVE(T.TEMP i,
 			       T.BINOP(T.PLUS, T.TEMP i, T.CONST 1)),
 			T.JUMP (T.NAME loop_lbl, [loop_lbl]),

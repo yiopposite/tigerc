@@ -315,10 +315,10 @@ and transCompExp(ve, te, lv, left, oper, right, pos) =
 				 | A.GeOp => (Tr.mkIntGe (le, re), T.INT)
 				 | _ => ICE "transCompExp int bad oper")
 	  | (T.STRING, T.STRING) => (case oper of
-				   A.LtOp => (Tr.mkStrLt (le, re), T.STRING)
-				 | A.LeOp => (Tr.mkStrLe (le, re), T.STRING)
-				 | A.GtOp => (Tr.mkStrGt (le, re), T.STRING)
-				 | A.GeOp => (Tr.mkStrGe (le, re), T.STRING)
+				   A.LtOp => (Tr.mkStrLt (le, re), T.INT)
+				 | A.LeOp => (Tr.mkStrLe (le, re), T.INT)
+				 | A.GtOp => (Tr.mkStrGt (le, re), T.INT)
+				 | A.GeOp => (Tr.mkStrGe (le, re), T.INT)
 				 | _ => ICE "transCompExp string bad oper")
 	  | (_, _) => report(pos, "comparison of incompatible types")
     end

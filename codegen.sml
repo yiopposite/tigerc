@@ -32,6 +32,17 @@ fun codegen (frame: F.frame) (stm: T.stm) = let
       | relJ T.UGT = "ja"
       | relJ T.ULE = "jbe"
       | relJ T.UGE = "jnb"
+ 
+    fun relJ' T.EQ = "je"
+      | relJ' T.NE = "jne"
+      | relJ' T.GE = "jl"
+      | relJ' T.LE = "jg"
+      | relJ' T.GT = "jle"
+      | relJ' T.LT =  "jge"
+      | relJ' T.UGE = "jb"
+      | relJ' T.ULE = "ja"
+      | relJ' T.UGT = "jbe"
+      | relJ' T.ULT = "jnb"
 
     and munchStm (T.SEQ (s1, s2)) = (munchStm s1; munchStm s2)
       (* STORE *)
@@ -48,9 +59,6 @@ fun codegen (frame: F.frame) (stm: T.stm) = let
       | munchStm (T.MOVE(T.MEM(T.BINOP(T.PLUS, T.CONST i, e1)), e2)) =
 	emit (A.OPER {asm="\tmovq\t`s1, " ^ itoa i ^ "(`s0)\n",
 		      src=[munchExp e1, munchExp e2], dst=[], jmp=NONE})
-
-      | munchStm (T.MOVE(T.MEM(e1), T.MEM(e2))) =
-	ICE "munchStm MOVE MEM to MEM"
 
       | munchStm (T.MOVE(T.MEM(e1), e2)) =
 	emit (A.OPER {asm="\tmovq\t`s1, (`s0)\n",
@@ -105,7 +113,7 @@ fun codegen (frame: F.frame) (stm: T.stm) = let
       | munchStm (T.CJUMP (p, T.CONST i, e, t, f)) = (
 	  emit (A.OPER {asm="\tcmp\t$" ^ itoa i ^ ", `s0\n",
 			src=[munchExp e], dst=[], jmp=NONE});
-	  emit (A.OPER {asm="\t" ^ relJ p ^ "\t`j0\n",
+	  emit (A.OPER {asm="\t" ^ relJ' p ^ "\t`j0\n",
 			src=[], dst=[], jmp=SOME [t, f]}))
       | munchStm (T.CJUMP (p, e, T.CONST i, t, f)) = (
 	  emit (A.OPER {asm="\tcmp\t$" ^ itoa i ^ ", `s0\n",
